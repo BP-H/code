@@ -135,6 +135,7 @@ The API reads a few settings from the environment. When using
 `docker-compose.yml` you can override these values:
 
 - `OPENAI_API_KEY` – your OpenAI authentication key.
+- `OPENAI_MODEL` – OpenAI model name (default: `gpt-4o-mini`).
 - `REDIS_URL` – full Redis URL (overrides host/port).
 - `REDIS_HOST` – hostname of the Redis instance (default: `redis`).
 - `REDIS_PORT` – port for Redis (default: `6379`).
