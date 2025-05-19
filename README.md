@@ -257,3 +257,8 @@ Need this in a game, robot, or chatbot?
 Grab the stubs in **`/sdk`** and call `/chat`, `/manifest` (JSON), or `/manifest.yaml` (YAML) from Python, JS, C#, or any language that can hit HTTP — no extra dependencies required.
 
 For details on how the `manifest.yaml` file powers the character system and how to add your own entries, see [docs/manifest_system.md](docs/manifest_system.md).
+
+### Game Engine Integration
+Looking to embed GPT Frenzy in a game engine? Check the
+[Unity integration guide](docs/unity_integration.md) for a simple
+`MonoBehaviour` example that uses the C# client.
