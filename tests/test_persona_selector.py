@@ -1,4 +1,5 @@
 import os
+import sys
 import persona_selector as ps
 import pytest
 
@@ -121,3 +122,29 @@ def test_merge_files_write_failure(tmp_path, monkeypatch, capsys):
 
     captured = capsys.readouterr()
     assert "Failed to write to" in captured.out
+
+
+def test_builtin_personas_available_with_dir(tmp_path, monkeypatch, capsys):
+    base_root = tmp_path / "base"
+    extra_root = tmp_path / "extra"
+    builtins_dir = base_root / "personas"
+    builtin = builtins_dir / "base"
+    extra = extra_root / "custom"
+
+    builtin.mkdir(parents=True)
+    extra.mkdir(parents=True)
+
+    (builtin / "instruction.txt").write_text("b")
+    (builtin / "knowledge.txt").write_text("b")
+    (extra / "instruction.txt").write_text("c")
+    (extra / "knowledge.txt").write_text("c")
+
+    monkeypatch.setattr(ps, "BASE_DIR", str(base_root))
+    monkeypatch.setattr(ps, "SEARCH_DIRS", [str(base_root), str(builtins_dir)])
+    monkeypatch.setattr(sys, "argv", ["prog", "--dir", str(extra_root), "--list"])
+
+    ps.main()
+    captured = capsys.readouterr()
+
+    assert "base" in captured.out
+    assert "custom" in captured.out

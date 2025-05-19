@@ -4,7 +4,8 @@
 This script can run interactively or via command-line options. Use ``--merge``
 to combine a persona's instruction and knowledge files. Provide ``--output`` to
 write the merged text to a file, otherwise it is printed to ``stdout``.
-Specify ``--dir`` to add an extra search location for persona files.
+Specify ``--dir`` to add an extra search location for persona files alongside
+the built-in ``personas`` folder.
 """
 
 import argparse
@@ -155,7 +156,12 @@ def main() -> None:
     if args.dir:
         extra = os.path.abspath(args.dir)
         SEARCH_DIRS.insert(0, extra)
-        PERSONAS = load_personas([extra])
+        PERSONAS = load_personas(
+            [
+                extra,
+                os.path.join(BASE_DIR, "personas"),
+            ]
+        )
     else:
         PERSONAS = load_personas([os.path.join(BASE_DIR, "personas")])
     MENU = build_menu(PERSONAS)
