@@ -66,6 +66,8 @@ def rate_limit(ip, limit=60):
 @app.post("/chat")
 def chat(req: Msg, request: Request):
     rate_limit(request.client.host)
+    if req.character not in PROMPTS:
+        raise HTTPException(status_code=404, detail="Persona not found")
     reply = (
         client.chat.completions.create(
             model="gpt-4o-mini",
@@ -83,6 +85,8 @@ def chat(req: Msg, request: Request):
 @app.post("/chat/stream")
 def chat_stream(req: Msg, request: Request):
     rate_limit(request.client.host)
+    if req.character not in PROMPTS:
+        raise HTTPException(status_code=404, detail="Persona not found")
 
     def gen():
         resp = client.chat.completions.create(

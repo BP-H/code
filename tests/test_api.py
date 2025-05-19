@@ -172,3 +172,29 @@ def test_chat_stream(monkeypatch):
         assert resp.status_code == 200
         assert resp.headers['content-type'].startswith('text/event-stream')
         assert resp.text == 'AB'
+
+
+def test_chat_unknown_persona(monkeypatch):
+    _mock_rate_limit(monkeypatch)
+
+    def boom(*args, **kwargs):
+        raise AssertionError("should not be called")
+
+    monkeypatch.setattr(cr.client.chat.completions, 'create', boom)
+    with TestClient(cr.app) as client:
+        resp = client.post('/chat', json={'character': 'bogus', 'message': 'hi'})
+        assert resp.status_code == 404
+        assert resp.json() == {'detail': 'Persona not found'}
+
+
+def test_chat_stream_unknown_persona(monkeypatch):
+    _mock_rate_limit(monkeypatch)
+
+    def boom(*args, **kwargs):
+        raise AssertionError("should not be called")
+
+    monkeypatch.setattr(cr.client.chat.completions, 'create', boom)
+    with TestClient(cr.app) as client:
+        resp = client.post('/chat/stream', json={'character': 'bogus', 'message': 'hi'})
+        assert resp.status_code == 404
+        assert resp.json() == {'detail': 'Persona not found'}
