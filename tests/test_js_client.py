@@ -31,9 +31,9 @@ def test_js_client_rejects_on_error():
                 import {{ chat }} from './sdk/js/gptfrenzy-client.js';
                 try:
                     await chat('http://127.0.0.1:{port}', 'x', 'y');
-                    print('no-error')
+                    console.log('no-error');
                 except Exception as e:
-                    print('err:' + str(e))
+                    console.log('err:' + String(e));
                 """
             )
             root = Path(__file__).resolve().parents[1]
