@@ -99,7 +99,8 @@ def chat_stream(req: Msg, request: Request):
         )
         for c in resp:
             if "content" in c.choices[0].delta:
-                yield c.choices[0].delta.content
+                token = c.choices[0].delta.content
+                yield f"data: {token}\n\n"
 
     return StreamingResponse(gen(), media_type="text/event-stream")
 
