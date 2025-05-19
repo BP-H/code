@@ -10,7 +10,7 @@ All product and artist names are property of their respective owners and are use
 *Public-alpha white paper • May 2025*
 
 ## Abstract
-This paper describes an **art experiment** that publishes its entire organisational skeleton—charters, policies, helper scripts, and even a provisional brand voice—in a public GitHub repository (**BP-H/gptfrenzy**).
+This paper describes an **art experiment** that publishes its entire organisational skeleton—charters, policies, helper scripts, and even a provisional brand voice—in a public GitHub repository (**BP-H/code**).
 
 - Transparent policies anyone can inspect.
 - Instant updates across all roles.
@@ -144,4 +144,4 @@ particular persona is implemented, so avatars remain drop-in modules.
 ## 8 Conclusion  
 This experiment shows a path where **corporations can operate while owning zero intellectual property**. By treating charters as open-source code and refusing to appropriate the creative labour of contributors, we demonstrate that transparency and personal dignity can coexist with viral remix culture.
 
-Fork the scaffolding, build your own house, but keep the architects’ names on the blueprints. That is the simple social contract embedded in **BP-H/gptfrenzy**.
+Fork the scaffolding, build your own house, but keep the architects’ names on the blueprints. That is the simple social contract embedded in **BP-H/code**.
