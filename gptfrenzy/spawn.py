@@ -70,8 +70,11 @@ def launch(host: str, persona_path: str, **kwargs: Any) -> PersonaInstance:
     """Instantiate a persona from ``persona_path`` for the given ``host``."""
     persona_dir = Path(persona_path)
     manifest_file = persona_dir / "manifest.yaml"
-    with open(manifest_file, "r", encoding="utf-8") as f:
-        manifest = yaml.safe_load(f)
+    try:
+        with open(manifest_file, "r", encoding="utf-8") as f:
+            manifest = yaml.safe_load(f)
+    except (FileNotFoundError, yaml.YAMLError) as exc:
+        raise ValueError("manifest.yaml missing or unreadable") from exc
     if manifest.get("sap_version") != "0.3":
         raise ValueError("Unsupported SAP version")
 

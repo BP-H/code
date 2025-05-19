@@ -45,3 +45,28 @@ def test_invalid_version_raises(tmp_path):
         pass
     else:
         assert False, "ValueError not raised"
+
+
+def test_missing_manifest(tmp_path):
+    d = tmp_path / "persona"
+    d.mkdir()
+    (d / "persona.py").write_text("class Persona:\n    def __init__(self, **k): pass")
+    try:
+        launch("host", str(d))
+    except ValueError as e:
+        assert "manifest.yaml missing or unreadable" in str(e)
+    else:
+        assert False, "ValueError not raised"
+
+
+def test_bad_manifest_yaml(tmp_path):
+    d = tmp_path / "persona"
+    d.mkdir()
+    (d / "manifest.yaml").write_text(":\n")
+    (d / "persona.py").write_text("class Persona:\n    def __init__(self, **k): pass")
+    try:
+        launch("host", str(d))
+    except ValueError as e:
+        assert "manifest.yaml missing or unreadable" in str(e)
+    else:
+        assert False, "ValueError not raised"
