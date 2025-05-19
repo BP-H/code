@@ -8,6 +8,7 @@ import redis
 import yaml
 import pathlib
 import openai
+import logging
 
 client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 BASE = pathlib.Path(__file__).parent.parent
@@ -41,8 +42,23 @@ def _load_manifest():
 
 
 def _prime_prompts():
-    for pid, data in _load_manifest().items():
-        PROMPTS[pid] = (PERSONA_DIR / data["prompt_file"]).read_text(encoding="utf-8")
+    log = logging.getLogger(__name__)
+    try:
+        manifest = _load_manifest()
+    except FileNotFoundError as exc:
+        log.warning("Manifest not found: %s", exc)
+        return
+    except yaml.YAMLError as exc:
+        log.warning("Failed to parse manifest: %s", exc)
+        return
+
+    for pid, data in manifest.items():
+        try:
+            PROMPTS[pid] = (PERSONA_DIR / data["prompt_file"]).read_text(encoding="utf-8")
+        except FileNotFoundError as exc:
+            log.warning("Prompt file for '%s' missing: %s", pid, exc)
+        except yaml.YAMLError as exc:
+            log.warning("Invalid YAML for '%s': %s", pid, exc)
 
 
 _prime_prompts()
