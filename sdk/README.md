@@ -1,5 +1,5 @@
 # GPTFrenzy SDK stubs
-Thin, dependency-free wrappers around the `/chat` and `/manifest` endpoints.  
+Thin, dependency-free wrappers around the `/chat`, `/chat/stream`, and `/manifest` endpoints.
 Use whichever language matches your engine:
 
 | Language | File | Example |
@@ -12,3 +12,20 @@ All wrappers assume the FastAPI server is reachable at `http://localhost:8000`
 (or whatever base URL you pass).
 Calls that result in non-2xx responses will reject their returned promises with
 an `Error` containing the HTTP status code.
+
+## Streaming usage
+
+To consume streaming replies, use the `chatStream`/`ChatStream` helpers:
+
+```js
+for await (const tok of chatStream(url, 'blueprint-nova', 'Hi')) {
+  console.log(tok);
+}
+```
+
+```csharp
+await foreach (var tok in client.ChatStream("blueprint-nova", "Hi"))
+{
+    Console.Write(tok);
+}
+```
