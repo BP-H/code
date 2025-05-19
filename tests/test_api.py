@@ -171,7 +171,7 @@ def test_chat_stream(monkeypatch):
         resp = client.post('/chat/stream', json={'character': 'blueprint-nova', 'message': 'hey'})
         assert resp.status_code == 200
         assert resp.headers['content-type'].startswith('text/event-stream')
-        assert resp.text == 'AB'
+        assert resp.text == 'data: A\n\ndata: B\n\n'
 
 
 def test_chat_unknown_persona(monkeypatch):
