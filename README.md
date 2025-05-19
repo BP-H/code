@@ -258,3 +258,4 @@ Grab the stubs in **`/sdk`** and call `/chat`, `/manifest` (JSON), or `/manifest
 
 For details on how the `manifest.yaml` file powers the character system and how to add your own entries, see [docs/manifest_system.md](docs/manifest_system.md).
 To deploy a persona directory in another host (Discord, Unreal, Unity), follow the steps in [docs/spawn_system.md](docs/spawn_system.md).
+For a Unity-specific C# example using `GptFrenzyClient`, see [docs/unity_integration.md](docs/unity_integration.md).
