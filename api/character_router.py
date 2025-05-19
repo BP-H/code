@@ -10,6 +10,9 @@ import pathlib
 import openai
 
 client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Allow callers to set the OpenAI model via env with a sensible default so we
+# can easily swap models when deploying.
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 BASE = pathlib.Path(__file__).parent.parent
 PERSONA_DIR = BASE / "personas"
 MANIFEST = BASE / "manifest.yaml"
@@ -70,7 +73,7 @@ def chat(req: Msg, request: Request):
         raise HTTPException(status_code=404, detail="Persona not found")
     reply = (
         client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=OPENAI_MODEL,
             messages=[
                 {"role": "system", "content": PROMPTS[req.character]},
                 {"role": "user", "content": req.message},
@@ -90,7 +93,7 @@ def chat_stream(req: Msg, request: Request):
 
     def gen():
         resp = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=OPENAI_MODEL,
             messages=[
                 {"role": "system", "content": PROMPTS[req.character]},
                 {"role": "user", "content": req.message},
