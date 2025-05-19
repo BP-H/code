@@ -1,6 +1,10 @@
 # GPTFrenzy SDK stubs
-Thin, dependency-free wrappers around the `/chat`, `/chat/stream`, and `/manifest` endpoints.
-Use whichever language matches your engine:
+Lightweight wrappers around the `/chat`, `/chat/stream`, and `/manifest` endpoints.
+Use whichever language matches your engine. The Python client relies on the `requests` library (see `python/requirements.txt`). Install it with:
+
+```bash
+pip install -r python/requirements.txt
+```
 
 | Language | File | Example |
 |----------|------|---------|
