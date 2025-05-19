@@ -4,9 +4,13 @@ import threading
 import subprocess
 import textwrap
 from pathlib import Path
+import shutil
+import pytest
 
 
 def test_js_client_rejects_on_error():
+    if shutil.which("node") is None:
+        pytest.skip("node executable not found")
     class Handler(http.server.BaseHTTPRequestHandler):
         def do_POST(self):
             self.send_response(500)
