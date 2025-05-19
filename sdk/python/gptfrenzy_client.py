@@ -1,4 +1,5 @@
-import requests, json, typing as _t
+import requests
+import typing as _t
 
 
 class GPTFrenzyClient:
@@ -33,4 +34,6 @@ class GPTFrenzyClient:
             r.close()
 
     def manifest(self) -> _t.List[dict]:
-        return requests.get(f"{self.base}/manifest", timeout=10).json()
+        r = requests.get(f"{self.base}/manifest", timeout=10)
+        r.raise_for_status()
+        return r.json()
