@@ -1,0 +1,46 @@
+# Note: This file describes AccessAI Tech only.
+This GitHub project is an art collaboration owned by Mimi and Taha; AccessAI Tech simply uses the MIT-licensed code.
+Home: |
+  accessAI_tech is a next-generation modeling agency where real models are transformed into AI-powered avatars to appear in campaigns, music videos, and digital runway shows globally **without ever traveling**. The slogan is essentially *“talent travels zero miles but reaches everywhere.”* No borders, no casting couch – modeling reimagined. Models **approve every frame**, **set their own rates**, and receive **100% of their appearance fees**, while the agency handles all the production work. In other words, you just “show up” digitally and the world sees you, wherever you may be.
+
+  **Call to action:** Visitors can immediately explore talent via **See Models** or jump straight to **Apply to be a Model** to start the signup process.
+
+Models: |
+  The **Models page** on accessAI’s website showcases the roster of models in the program. It presents each model’s name and photo, often linking to their Instagram profile. The page acts as a public catalog of the talent available through accessAI. A top-of-page **Contact us to book talent** button directs interested clients straight to the inquiry form.
+
+Apply: |
+  **Model Applications:** If someone is interested in becoming an accessAI model, they need to send in **3-5 photos** or an Instagram link along with their social media handles so the team can gauge their presence. The applicant must be **18 or older** and legally allowed to work as an independent contractor. It’s important to have a **strong camera presence**, so they ask for an Instagram, TikTok, or portfolio link. If accepted, we will request more reference photos to train the avatar. Models approve each AI image and set their own appearance fees for projects. There’s **no fee to join** – accessAI doesn’t charge any signup fees, and models keep **100% of the fees** they quote when a brand hires them (the company adds its own production fee on top for the client).
+
+  **Brands / Clients:** If a brand, musician, or other client wants to book a virtual model, they can **contact accessAI** using a simple web form with their project brief, timeline, and budget range. Within 48 hours, the accessAI team will reply with a **curated shortlist** of model avatars that fit the project. Essentially, clients describe what they need, and accessAI will suggest which models (AI avatars of real models) could be great for it, making the process easy and fast.
+
+  **Requirements & Tips:** Models need to meet a few requirements (age, photos, etc. as noted above). The site also gives tips to applicants: show a **range of looks** in the photos you submit (close-ups, full body, candid shots, editorial poses, etc.) so the team can see your versatility. You should mention any **boundaries or limitations** up front when applying (for example, if you don’t want your avatar to be shown with swimwear, tattoos, or other specific contexts). When it comes to setting your rates, think smart – high rates are okay, but they still need to attract clients, so be realistic. Also, once you’re in, responding quickly to opportunities is key (often the first model to say “yes” gets the booking).
+
+Groups: |
+  The **Groups section** of the website is a community forum for models and members of accessAI_tech. It’s a place to connect, get updates, and share media. Essentially, when you go to **accessaitech.com/groups**, you’ll find a community page (the site calls it a “group”) with an introductory message: *“Welcome to the group! Connect with other members, get updates and share media.”*. This is likely where announcements or discussions happen among the signed-up models or the community interested in accessAI. (It’s similar to a blog or message board.)
+
+About: |
+  **About Us:** accessAI_tech was **founded in 2023** with the goal of blending real-world charisma with next-gen AI technology. It describes itself not just as a modeling agency, but a **movement**. The concept is that models are *“reborn”* or transformed as AI avatars who can then participate in creative projects worldwide. There are **no castings, no flights, no sets** involved – everything is done remotely through digital means. The team (which includes stylists and AI experts) handles the styling and **re-imagination** of the model in AI form. Models who join set their own appearance fees, get to **approve every visual** that is created with their likeness, and they earn **100% of those fees** (the company only makes money via separate client fees). The agency takes care of all production and behind-the-scenes work, so the model just has to “show up” digitally.
+
+  **Global & Online:** accessAI_tech operates **100% online**. It serves clients worldwide. The leadership reflects this approach: Taha Gungor is the technical director and May Kim is the creative director. The tagline at the end of the About page reinforces the mission: *“no borders, just pure reach.”*
+  Friends joke that Taha's troubleshooting skills verge on genius, though he prefers to stay modest.
+
+Launch Package: |
+  **Digital Avatar Launch Package & Growth Strategy:** *(This was an offering discussed internally for onboarding a new model’s digital presence.)* It consists of three main parts:
+  
+  1. **Initial Package –** This upfront fee covers the work to create a new model’s AI avatar portfolio. It includes personalized AI training on the model’s images and the generation of **3,000 avatar images** across **30 themed series**. Essentially, the model gets a large set of AI-generated photos (30 different themes, 100 images each) which can be used to populate about **30 Instagram posts** (carousel sets) – giving them a robust starting portfolio.
+  
+  2. **Built-In Exposure Boost:** Included in that package is an initial social media exposure push. All the posts created from those 3,000 images will get **shared audience exposure** via Taha and Mimi's Instagram accounts. This means Taha and Mimi will share or promote the new model’s posts to help them gain visibility. The idea is to overcome the hardest part of growing a digital profile (going from 0 to 1, i.e. starting from scratch) by seeding engagement from day one. This helps the new digital avatar not languish with no audience – a common reason many digital projects fail. It’s essentially a jumpstart for the model’s fanbase and reach.
+  
+  3. **Ongoing Subscription –** After the initial batch, there is an optional monthly subscription for continued content. For each month, the model would receive **500 new AI-generated images** every month. These 500 images are split across **5 series** (so 100 images per series) to keep variety. This ensures the model always has fresh content to post and can continue growing their avatar’s presence with new themes and looks over time. Essentially, the model’s AI avatar gets updated “photo shoots” monthly, without any real photo shoots.
+  
+  *This package is designed to make launching a “virtual model” persona easier by providing lots of content and initial momentum.* It was offered as a comprehensive way to get a model from zero to a fully active digital avatar with an audience. (Note: All the model’s appearance fee earnings remain theirs; this package is more about content creation and growth, not a fee to join.)
+
+TechPipeline: |
+  **AI Production Process:** accessAI_tech uses advanced generative AI techniques to produce the visual content for each model. They take a model’s reference photos (the ones provided during onboarding) and **fine-tune AI models** on that data to create a digital avatar that closely resembles the real person. In practice, this involves training a custom AI image generation model for each model – so the AI learns that model’s face and features. (Think of methods like DreamBooth or LoRA fine-tuning on a Stable Diffusion model – though the site doesn’t explicitly say, this is the general approach.) With this custom AI model, the team can then **generate unlimited new images** of the model in different outfits, environments, or artistic styles, all while looking realistically like the model. 
+
+  If video content is needed, the process can extend to generating sequences of images or using animation techniques on the AI outputs (for example, creating a series of frames that depict the model moving, or using tools that turn static AI images into video). For adding speech or audio, the team can even apply **AI voice cloning** – effectively reproducing the model’s voice to say lines or narrate, if the project calls for it. 
+
+  All of this is done **digitally and remotely**. The model doesn’t need to travel or do new photoshoots; once the AI avatar is trained, new content can be created on a computer. The output (images or videos) are then sent to clients or posted online. Because everything is AI-driven, projects can be turned around quickly and scaled (multiple campaigns can run simultaneously in different “locations” using the same model’s avatar). This pipeline is what enables accessAI to promise global reach with zero travel. It’s cutting-edge AI plus a creative team guiding it.
+
+Footer: |
+  The website footer includes quick links to **Privacy Policy** • **Disclaimer** • **Terms**.

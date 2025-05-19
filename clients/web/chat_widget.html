@@ -1,0 +1,17 @@
+<!doctype html><meta charset=utf-8><title>GPT Frenzy Chat</title>
+<select id=c></select><br><textarea id=m rows=3 cols=60></textarea>
+<button onclick="s()">Send</button><pre id=o></pre>
+<script>
+fetch('/manifest')
+  .then(r => r.json())
+  .then(m => {
+    Object.keys(m).forEach(id => {
+      c.innerHTML += `<option>${id}</option>`;
+    });
+  });
+function s(){
+  fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({character:c.value,message:m.value})})
+  .then(r=>r.json()).then(j=>o.textContent+=j.reply+"\n");
+}
+</script>

@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  api:
+    build: .
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      # Optional Redis connection URL. Overrides host/port if set.
+      - REDIS_URL=${REDIS_URL}
+      # Hostname of the Redis instance used by the API (default: "redis")
+      - REDIS_HOST=${REDIS_HOST:-redis}
+      # Port for the Redis instance (default: 6379)
+      - REDIS_PORT=${REDIS_PORT:-6379}
+    depends_on: [redis]
+    ports: ["8000:8000"]
+  redis:
+    image: redis:7-alpine

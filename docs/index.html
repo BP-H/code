@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPT Frenzy Mini Game</title>
+<style>
+  body { font-family: Arial, sans-serif; text-align: center; background: #f2f2f2; }
+  #game { border: 1px solid #444; background: #fff; image-rendering: pixelated; }
+  #controls button { margin: 0.25rem; }
+</style>
+</head>
+<body>
+<h1>GPT Frenzy Mini Game</h1>
+<p>Select a persona and use the arrow keys (or on-screen buttons) to collect the ⭐.</p>
+<div id="menu">
+  <button data-emoji="🎨">Mimi</button>
+  <button data-emoji="🚀">Supernova</button>
+</div>
+<canvas id="game" width="320" height="320" role="img" aria-label="Mini game canvas. Use arrow keys or on-screen buttons to move."></canvas>
+<div id="controls">
+  <div>
+    <button data-dir="up" aria-label="Move Up">&#x2B06;&#xFE0F;</button>
+  </div>
+  <div>
+    <button data-dir="left" aria-label="Move Left">&#x2B05;&#xFE0F;</button>
+    <button data-dir="down" aria-label="Move Down">&#x2B07;&#xFE0F;</button>
+    <button data-dir="right" aria-label="Move Right">&#x27A1;&#xFE0F;</button>
+  </div>
+</div>
+<footer style="margin-top:2rem;font-size:0.9rem;">
+  This playful demo was auto-generated for the GPT Frenzy art project. No commercial use implied.
+</footer>
+<script>
+const tile = 32;
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+let player = {x: 0, y: 0, emoji: '🦋'};
+let star = {x: 5, y: 5};
+const status = document.getElementById('status');
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.font = '28px serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  // draw grid
+  ctx.strokeStyle = '#ccc';
+  for (let i=0;i<10;i++) {
+    for (let j=0;j<10;j++) {
+      ctx.strokeRect(i*tile, j*tile, tile, tile);
+    }
+  }
+  // draw star
+  ctx.fillText('⭐', star.x*tile+tile/2, star.y*tile+tile/2+2);
+  // draw player
+  ctx.fillText(player.emoji, player.x*tile+tile/2, player.y*tile+tile/2+2);
+}
+
+function move(dx, dy) {
+  player.x = Math.max(0, Math.min(9, player.x + dx));
+  player.y = Math.max(0, Math.min(9, player.y + dy));
+  if (player.x === star.x && player.y === star.y) {
+    status.textContent = 'You found the star!';
+  }
+  draw();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowUp') move(0,-1);
+  if (e.key === 'ArrowDown') move(0,1);
+  if (e.key === 'ArrowLeft') move(-1,0);
+  if (e.key === 'ArrowRight') move(1,0);
+});
+
+document.querySelectorAll('#controls button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const dir = btn.getAttribute('data-dir');
+    if (dir === 'up') move(0,-1);
+    if (dir === 'down') move(0,1);
+    if (dir === 'left') move(-1,0);
+    if (dir === 'right') move(1,0);
+  });
+});
+
+document.querySelectorAll('#menu button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    player.emoji = btn.getAttribute('data-emoji');
+    status.textContent = '';
+    player.x = 0; player.y = 0;
+    draw();
+  });
+});
+
+  draw();
+</script>
+<footer style="font-size:0.8em;margin-top:1rem;">
+  The demo code is MIT-licensed by Mimi and Taha. The avatars depicted remain the property of their respective owners.
+</footer>
+</body>
+</html>
