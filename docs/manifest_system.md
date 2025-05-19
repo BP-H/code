@@ -46,3 +46,7 @@ The SDK stubs under [`/sdk`](../sdk) provide lightweight wrappers for Python, Ja
 ## Is this the “spawnable character system”?
 
 The repository does not explicitly mention a separate "spawnable character system." In practice, the manifest-driven API allows clients to spawn (i.e., instantiate) any character listed in `manifest.yaml`. So the manifest serves as the basis for whatever was meant by a spawnable system.
+
+For instructions on packaging a persona directory that can be loaded by other
+hosts (for example Discord bots or game engines), see
+[spawn_system.md](spawn_system.md).
