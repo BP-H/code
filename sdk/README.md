@@ -15,12 +15,17 @@ an `Error` containing the HTTP status code.
 
 ## Streaming usage
 
-To consume streaming replies, use the `chatStream`/`ChatStream` helpers:
+To consume streaming replies, use the `chat_stream`/`chatStream`/`ChatStream` helpers:
 
 ```js
 for await (const tok of chatStream(url, 'blueprint-nova', 'Hi')) {
   console.log(tok);
 }
+```
+
+```python
+for tok in bot.chat_stream('blueprint-nova', 'Hi'):
+    print(tok, end='')
 ```
 
 ```csharp
