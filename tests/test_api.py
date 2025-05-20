@@ -123,7 +123,7 @@ if 'httpx' not in sys.modules:
 
 from fastapi.testclient import TestClient
 import types as _types
-import api.character_router as cr
+from api import character_router as cr
 
 
 def _mock_rate_limit(monkeypatch):

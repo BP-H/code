@@ -1,6 +1,6 @@
 import yaml
 import pytest
-import api.character_router as cr
+from api import character_router as cr
 
 
 def test_manifest_requires_prompt_file(tmp_path, monkeypatch):
