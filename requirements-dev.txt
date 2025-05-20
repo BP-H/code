@@ -3,3 +3,6 @@ pytest
 fakeredis
 flake8
 isort
+pytest
+fakeredis
+pyyaml
