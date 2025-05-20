@@ -11,3 +11,4 @@ uvicorn[standard]~=0.30
 pytest
 fakeredis
 pyyaml
+rich~=13.7
