@@ -13,7 +13,8 @@ import os
 from typing import Dict, List, Tuple
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SEARCH_DIRS = [BASE_DIR, os.path.join(BASE_DIR, "personas")]
+# ``SEARCH_DIRS`` is initialized in ``main()`` so repeated calls reset it.
+SEARCH_DIRS: List[str] = []
 
 
 def load_personas(dirs: List[str]) -> Dict[str, Tuple[str, str, str]]:
@@ -152,7 +153,10 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    global PERSONAS, MENU
+    global PERSONAS, MENU, SEARCH_DIRS
+    # Reset search directories to their defaults before applying command-line
+    # arguments so repeated ``main()`` calls behave consistently.
+    SEARCH_DIRS = [BASE_DIR, os.path.join(BASE_DIR, "personas")]
     if args.dir:
         extra = os.path.abspath(args.dir)
         SEARCH_DIRS.insert(0, extra)
