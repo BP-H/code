@@ -5,10 +5,14 @@ from api import rate_limit
 
 
 def test_rate_limit_redis_down(monkeypatch):
-    def boom(*args, **kwargs):
-        raise redis.exceptions.ConnectionError
+    class BoomRedis:
+        def incr(self, *args, **kwargs):
+            raise redis.exceptions.ConnectionError
 
-    monkeypatch.setattr(cr.r, "incr", boom)
+        def expire(self, *args, **kwargs):
+            pass
+
+    monkeypatch.setattr(cr, "get_redis", lambda: BoomRedis())
     try:
         rate_limit("1.1.1.1")
     except HTTPException as exc:
