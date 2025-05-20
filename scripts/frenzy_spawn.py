@@ -1,3 +1,12 @@
+"""Spawn a persona process via the SAP controller.
+
+Run as a module using::
+
+    python -m scripts.frenzy_spawn <persona_dir> [--host HOST]
+
+The command is also installed as ``frenzy-spawn`` via the package entry point.
+"""
+
 import argparse
 from pathlib import Path
 
