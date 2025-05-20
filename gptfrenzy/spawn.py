@@ -37,23 +37,29 @@ class PersonaInstance:
             result = await result
         return result
 
-    def speak(self, audio: Any | None = None) -> Any:
+    async def speak(self, audio: Any | None = None) -> Any:
         """Delegate text-to-speech to the persona if allowed."""
 
         if "voice" not in self.capabilities:
             raise RuntimeError("voice capability unavailable")
         if not hasattr(self._impl, "speak"):
             raise AttributeError("Persona missing speak()")
-        return self._impl.speak(audio)
+        result = self._impl.speak(audio)
+        if asyncio.iscoroutine(result):
+            result = await result
+        return result
 
-    def embody(self, *args: Any, **kwargs: Any) -> Any:
+    async def embody(self, *args: Any, **kwargs: Any) -> Any:
         """Forward embodiment data to the persona if supported."""
 
         if "realtime_embodiment" not in self.capabilities:
             raise RuntimeError("realtime_embodiment capability unavailable")
         if not hasattr(self._impl, "embody"):
             raise AttributeError("Persona missing embody()")
-        return self._impl.embody(*args, **kwargs)
+        result = self._impl.embody(*args, **kwargs)
+        if asyncio.iscoroutine(result):
+            result = await result
+        return result
 
 
 def _load_persona_class(persona_dir: Path) -> type:
