@@ -145,6 +145,21 @@ The API reads a few settings from the environment. When using
 Run `python3 app.py --openapi` to regenerate `openapi.json`. This command loads `api.character_router:app` so the resulting spec documents `/chat`, `/chat/stream`, and `/manifest`. Rebuild the file whenever you change those endpoints.
 
 
+## Web Chat Widget
+
+A bare-bones browser client lives in `clients/web/chat_widget.html`. Serve the file
+with any static web host:
+
+```bash
+cd clients/web
+python3 -m http.server 8000
+```
+
+Then visit <http://localhost:8000/chat_widget.html?baseUrl=http://localhost:8000>.
+The widget reads the `baseUrl` query parameter (or a `data-baseurl` attribute on
+the `<script>` tag) and sends requests to `${baseUrl}/manifest` and
+`${baseUrl}/chat`.
+
 ## Company Sandbox Avatar
 
 AccessAI Tech's `Company` persona appears here solely as a demo sandbox and does not represent official policy. Feel free to experiment with it using the helper scripts below.

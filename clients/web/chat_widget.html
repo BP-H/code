@@ -5,7 +5,9 @@
 const select = document.getElementById('c');
 const msg = document.getElementById('m');
 const out = document.getElementById('o');
-fetch('/manifest')
+const params = new URLSearchParams(location.search);
+const baseUrl = document.currentScript.dataset.baseurl || params.get('baseUrl') || '';
+fetch(`${baseUrl}/manifest`)
   .then(r => r.json())
   .then(m => {
     Object.keys(m).forEach(id => {
@@ -13,7 +15,7 @@ fetch('/manifest')
     });
   });
 function s(){
-  fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},
+  fetch(`${baseUrl}/chat`,{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({character:select.value,message:msg.value})})
   .then(r=>r.json()).then(j=>out.textContent+=j.reply+"\n");
 }
