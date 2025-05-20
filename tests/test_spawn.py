@@ -94,6 +94,27 @@ def test_async_speak(tmp_path):
     assert asyncio.run(inst.speak()) == "async"
 
 
+def test_async_embody(tmp_path):
+    d = tmp_path / "persona"
+    d.mkdir()
+    manifest = {
+        "sap_version": "0.3",
+        "entrypoint": "gptfrenzy.spawn:launch",
+        "assets": [],
+        "capabilities": ["text", "realtime_embodiment"],
+        "license_ref": "./LICENSE_PERSONAS",
+    }
+    (d / "manifest.yaml").write_text(yaml.safe_dump(manifest))
+    (d / "persona.py").write_text(
+        "class Persona:\n"
+        "    def __init__(self, **k): pass\n"
+        "    async def generate(self, t): return t\n"
+        "    async def embody(self, *a, **kw): return 'done'"
+    )
+    inst = launch("host", str(d))
+    assert asyncio.run(inst.embody()) == "done"
+
+
 def test_custom_entrypoint(tmp_path):
     d = tmp_path / "persona"
     d.mkdir()
