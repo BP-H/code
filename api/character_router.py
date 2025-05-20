@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, PlainTextResponse
+import persona_selector as ps
 from pydantic import BaseModel
 import os
 import time
@@ -65,7 +66,9 @@ def _prime_prompts():
 
     for pid, data in manifest.items():
         try:
-            PROMPTS[pid] = (PERSONA_DIR / data["prompt_file"]).read_text(encoding="utf-8")
+            PROMPTS[pid] = (PERSONA_DIR / data["prompt_file"]).read_text(
+                encoding="utf-8"
+            )
         except FileNotFoundError as exc:
             log.warning("Prompt file for '%s' missing: %s", pid, exc)
         except yaml.YAMLError as exc:
@@ -78,6 +81,10 @@ _prime_prompts()
 class Msg(BaseModel):
     character: str
     message: str
+
+
+class MergeReq(BaseModel):
+    id: int
 
 
 def rate_limit(ip, limit=60):
@@ -149,3 +156,23 @@ def get_manifest():
 def get_manifest_yaml():
     """Return the raw manifest file as plain text."""
     return MANIFEST.read_text(encoding="utf-8")
+
+
+@app.post("/merge")
+def merge(req: MergeReq, request: Request):
+    """Return merged instruction and knowledge text."""
+    rate_limit(request.client.host)
+    pid = str(req.id)
+    persona = ps.PERSONAS.get(pid)
+    if not persona:
+        raise HTTPException(status_code=404, detail="Persona not found")
+    _, instr, know = persona
+    instr_path = ps.find_file(instr)
+    know_path = ps.find_file(know)
+    if not (instr_path and know_path):
+        raise HTTPException(status_code=404, detail="Files missing")
+    with open(instr_path, "r", encoding="utf-8") as f:
+        merged = f.read().rstrip() + "\n\n"
+    with open(know_path, "r", encoding="utf-8") as f:
+        merged += f.read().lstrip()
+    return {"text": merged}
