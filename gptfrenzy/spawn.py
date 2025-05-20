@@ -89,6 +89,15 @@ def launch(host: str, persona_path: str, **kwargs: Any) -> PersonaInstance:
     if manifest.get("sap_version") != "0.3":
         raise ValueError("Unsupported SAP version")
 
+    entrypoint = manifest.get("entrypoint", "gptfrenzy.spawn:launch")
+    if entrypoint != "gptfrenzy.spawn:launch":
+        mod_name, _, func_name = entrypoint.partition(":")
+        if not mod_name or not func_name:
+            raise ValueError("Invalid entrypoint")
+        module = importlib.import_module(mod_name)
+        func = getattr(module, func_name)
+        return func(host, persona_path, **kwargs)
+
     caps = manifest.get("capabilities", ["text"])
     PersonaCls = _load_persona_class(persona_dir)
     persona_obj = PersonaCls(host=host, persona_path=str(persona_dir), **kwargs)

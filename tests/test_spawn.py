@@ -92,3 +92,28 @@ def test_async_speak(tmp_path):
     )
     inst = launch("host", str(d))
     assert asyncio.run(inst.speak()) == "async"
+
+
+def test_custom_entrypoint(tmp_path):
+    d = tmp_path / "persona"
+    d.mkdir()
+    (d / "persona.py").write_text("class Persona: pass")
+    (d / "custom_entry.py").write_text(
+        "def alt_launch(host, path, **kw):\n    return {'called': True, 'h': host, 'p': path}"
+    )
+    manifest = {
+        "sap_version": "0.3",
+        "entrypoint": "custom_entry:alt_launch",
+        "assets": [],
+        "capabilities": ["text"],
+        "license_ref": "./LICENSE_PERSONAS",
+    }
+    (d / "manifest.yaml").write_text(yaml.safe_dump(manifest))
+    import sys
+
+    sys.path.insert(0, str(d))
+    try:
+        res = launch("host", str(d))
+    finally:
+        sys.path.remove(str(d))
+    assert res == {"called": True, "h": "host", "p": str(d)}
