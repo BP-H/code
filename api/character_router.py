@@ -61,15 +61,21 @@ def _load_manifest():
         raise ValueError("manifest must be a list of entries")
 
     manifest = {}
-    for entry in data:
-        if (
-            not isinstance(entry, dict)
-            or "id" not in entry
-            or "prompt_file" not in entry
-        ):
+    for idx, entry in enumerate(data):
+        if not isinstance(entry, dict):
+            raise ValueError(f"Invalid manifest entry at {MANIFEST}:{idx}")
+
+        missing = [
+            key
+            for key in ("id", "prompt_file", "entrypoint")
+            if not entry.get(key)
+        ]
+        if missing:
+            missing_keys = ", ".join(missing)
             raise ValueError(
-                "manifest entries must include id and prompt_file"
+                f"Manifest entry {MANIFEST}:{idx} missing {missing_keys}"
             )
+
         manifest[entry["id"]] = entry
 
     return manifest
