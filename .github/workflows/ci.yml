@@ -9,3 +9,9 @@ jobs:
         with:
           python-version: '3.x'
       - run: pip install -r requirements-dev.txt && pytest -q
+      - run: pip install pip-tools
+      - run: pip-compile --upgrade --output-file=requirements-lock.txt requirements.txt
+      - run: |
+          git diff --quiet requirements-lock.txt || {
+            echo "requirements-lock.txt is outdated. Run 'pip-compile --upgrade' and commit the result." && exit 1;
+          }
