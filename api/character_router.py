@@ -30,9 +30,17 @@ r = redis.from_url(redis_url, decode_responses=True)
 app = FastAPI()
 
 # --- CORS so browsers, WebGL & mobile apps can hit us directly ----------
+# Allow callers to restrict origins via ALLOWED_ORIGINS. Provide a comma-
+# separated list or "*" for the default open policy.
+_origins = os.getenv("ALLOWED_ORIGINS", "*")
+if _origins == "*":
+    allow_origins = ["*"]
+else:
+    allow_origins = [o.strip() for o in _origins.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

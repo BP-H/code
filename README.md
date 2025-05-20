@@ -139,6 +139,7 @@ The API reads a few settings from the environment. When using
 - `REDIS_URL` – full Redis URL (overrides host/port).
 - `REDIS_HOST` – hostname of the Redis instance (default: `redis`).
 - `REDIS_PORT` – port for Redis (default: `6379`).
+- `ALLOWED_ORIGINS` – comma-separated list for CORS (default: `*`).
 
 ### Updating `openapi.json`
 
