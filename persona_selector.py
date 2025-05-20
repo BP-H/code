@@ -10,7 +10,10 @@ the built-in ``personas`` folder.
 
 import argparse
 import os
+from pathlib import Path
 from typing import Dict, List, Tuple
+
+from gptfrenzy.utils import ensure_parent_dirs
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Default search locations for persona files. ``main()`` resets this list
@@ -98,6 +101,7 @@ def merge_files(persona_id: str, output: str | None) -> None:
 
     if output:
         try:
+            ensure_parent_dirs(Path(output))
             with open(output, "w", encoding="utf-8") as f:
                 f.write(merged)
         except OSError as e:

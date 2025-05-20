@@ -1,8 +1,10 @@
 import json
 import sys
+from pathlib import Path
 from fastapi import Body, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import persona_selector as ps
+from gptfrenzy.utils import ensure_parent_dirs
 
 app = FastAPI(title="Persona Selector API")
 app.add_middleware(
@@ -59,7 +61,9 @@ if __name__ == "__main__":
         # Mount the character API so our spec includes those routes
         app.include_router(character_app.router)
 
-        with open("openapi.json", "w", encoding="utf-8") as f:
+        path = Path("openapi.json")
+        ensure_parent_dirs(path)
+        with open(path, "w", encoding="utf-8") as f:
             json.dump(app.openapi(), f, indent=2)
     else:
         import uvicorn
