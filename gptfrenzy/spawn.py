@@ -23,6 +23,8 @@ import asyncio
 
 import yaml
 
+from .utils import ensure_parent_dirs
+
 
 class PersonaInstance:
     """Wrapper around a persona implementation enforcing capability flags."""
@@ -120,6 +122,7 @@ def make_manifest(persona_dir: str) -> Path:
         "capabilities": ["text"],
         "license_ref": "./LICENSE_PERSONAS",
     }
+    ensure_parent_dirs(path)
     with open(path, "w", encoding="utf-8") as f:
         yaml.safe_dump(manifest, f, sort_keys=False)
     return path
