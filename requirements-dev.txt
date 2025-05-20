@@ -6,3 +6,4 @@ isort
 pytest
 fakeredis
 pyyaml
+rich~=13.7
