@@ -7,7 +7,10 @@ and respond to messages in Discord.
    ```bash
    pip install discord.py
    ```
-2. Run the bot, passing the persona directory and your Discord token:
+2. Enable the **Message Content Intent** for your bot in the Discord
+   developer portal so it can read messages. The bot sets
+   `intents.message_content = True` in `bot.py`.
+3. Run the bot, passing the persona directory and your Discord token:
    ```bash
    python bot.py /path/to/persona YOUR_BOT_TOKEN
    ```
