@@ -172,3 +172,32 @@ def test_builtin_personas_available_with_dir(tmp_path, monkeypatch, capsys):
 
     assert "base" in captured.out
     assert "custom" in captured.out
+
+
+def test_merge_files_open_failure(tmp_path, monkeypatch):
+    persona_id = "X"
+    instr_name = "instr.txt"
+    know_name = "knowledge.txt"
+    monkeypatch.setattr(ps, "PERSONAS", {persona_id: ("Test", instr_name, know_name)})
+    monkeypatch.setattr(ps, "SEARCH_DIRS", [str(tmp_path)])
+
+    instr_path = tmp_path / instr_name
+    know_path = tmp_path / know_name
+    instr_path.write_text("hello")
+    know_path.write_text("world")
+
+    import builtins
+
+    real_open = builtins.open
+
+    def fail_open(path, *args, **kwargs):
+        if path == str(instr_path):
+            raise FileNotFoundError
+        return real_open(path, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "open", fail_open)
+
+    with pytest.raises(ps.HTTPException) as exc:
+        ps.merge_files(persona_id, None)
+
+    assert exc.value.status_code == 404

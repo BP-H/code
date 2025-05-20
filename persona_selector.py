@@ -12,6 +12,7 @@ import argparse
 import os
 from pathlib import Path
 from typing import Dict, List, Tuple
+from fastapi import HTTPException
 
 from gptfrenzy.utils import ensure_parent_dirs
 
@@ -94,10 +95,13 @@ def merge_files(persona_id: str, output: str | None) -> None:
         print("Instruction or knowledge file not found.")
         return
 
-    with open(instr_path, "r", encoding="utf-8") as f:
-        merged = f.read().rstrip() + "\n\n"
-    with open(knowledge_path, "r", encoding="utf-8") as f:
-        merged += f.read().lstrip()
+    try:
+        with open(instr_path, "r", encoding="utf-8") as f:
+            merged = f.read().rstrip() + "\n\n"
+        with open(knowledge_path, "r", encoding="utf-8") as f:
+            merged += f.read().lstrip()
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="persona not found") from exc
 
     if output:
         try:
