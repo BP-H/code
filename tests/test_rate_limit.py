@@ -1,6 +1,6 @@
 import redis
 from fastapi import HTTPException
-import api.character_router as cr
+from api import character_router as cr
 from api import rate_limit
 
 
