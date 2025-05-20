@@ -12,6 +12,7 @@ from gptfrenzy.spawn import launch
 async def main(persona_dir: str, token: str) -> None:
     persona = launch("discord", persona_dir)
     intents = discord.Intents.default()
+    intents.message_content = True
     client = discord.Client(intents=intents)
 
     @client.event
