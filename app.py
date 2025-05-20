@@ -28,12 +28,17 @@ def _merge_text(pid: str) -> str:
     _, instr, know = persona
     instr_path = ps.find_file(instr)
     know_path = ps.find_file(know)
-    if not (instr_path and know_path):
-        raise HTTPException(status_code=404, detail="Files missing")
-    with open(instr_path, "r", encoding="utf-8") as f:
-        merged = f.read().rstrip() + "\n\n"
-    with open(know_path, "r", encoding="utf-8") as f:
-        merged += f.read().lstrip()
+    try:
+        merged = (
+            Path(instr_path).read_text()
+            + "\n\n"
+            + Path(know_path).read_text()
+        )
+    except FileNotFoundError:
+        raise HTTPException(
+            status_code=404,
+            detail="Instruction or knowledge file missing",
+        )
     return merged
 
 
