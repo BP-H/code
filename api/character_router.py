@@ -102,9 +102,11 @@ class Msg(BaseModel):
 def rate_limit(ip, limit=60):
     key = f"rl:{ip}:{int(time.time())//60}"
     try:
-        if r.incr(key) > limit:
-            raise HTTPException(429, "Rate limit exceeded")
+        count = r.incr(key)
+        # Expire first so new keys always get a TTL even when over limit
         r.expire(key, 61)
+        if count > limit:
+            raise HTTPException(429, "Rate limit exceeded")
     except redis.exceptions.ConnectionError as exc:
         raise HTTPException(status_code=503, detail="Rate limiter unavailable") from exc
 
