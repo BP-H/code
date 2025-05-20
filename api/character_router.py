@@ -50,8 +50,23 @@ app.add_middleware(
 
 
 def _load_manifest():
-    with MANIFEST.open(encoding="utf-8") as f:
-        return {d["id"]: d for d in yaml.safe_load(f)}
+    """Return the manifest as a dict keyed by persona id."""
+    try:
+        with MANIFEST.open(encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+    except FileNotFoundError as exc:
+        raise FileNotFoundError(f"manifest file not found: {MANIFEST}") from exc
+
+    if not isinstance(data, list):
+        raise ValueError("manifest must be a list of entries")
+
+    manifest = {}
+    for entry in data:
+        if not isinstance(entry, dict) or "id" not in entry:
+            raise ValueError("manifest entries must be dicts containing an 'id'")
+        manifest[entry["id"]] = entry
+
+    return manifest
 
 
 def _prime_prompts():
@@ -61,13 +76,15 @@ def _prime_prompts():
     except FileNotFoundError as exc:
         log.warning("Manifest not found: %s", exc)
         return
-    except yaml.YAMLError as exc:
-        log.warning("Failed to parse manifest: %s", exc)
+    except (yaml.YAMLError, ValueError) as exc:
+        log.warning("Failed to load manifest: %s", exc)
         return
 
     for pid, data in manifest.items():
         try:
-            PROMPTS[pid] = (PERSONA_DIR / data["prompt_file"]).read_text(encoding="utf-8")
+            PROMPTS[pid] = (PERSONA_DIR / data["prompt_file"]).read_text(
+                encoding="utf-8"
+            )
         except FileNotFoundError as exc:
             log.warning("Prompt file for '%s' missing: %s", pid, exc)
         except yaml.YAMLError as exc:
@@ -158,7 +175,13 @@ def root():
 # Serve manifest as JSON so SDKs auto-discover characters
 @app.get("/manifest")
 def get_manifest():
-    return _load_manifest()
+    try:
+        return _load_manifest()
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="Manifest file not found") from exc
+    except (yaml.YAMLError, ValueError) as exc:
+        log.warning("Failed to load manifest: %s", exc)
+        raise HTTPException(status_code=500, detail="Invalid manifest file") from exc
 
 
 @app.get("/manifest.yaml", response_class=PlainTextResponse)
