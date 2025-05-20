@@ -127,8 +127,11 @@ import api.character_router as cr
 
 
 def _mock_rate_limit(monkeypatch):
-    monkeypatch.setattr(cr.r, 'incr', lambda *a, **k: 1)
-    monkeypatch.setattr(cr.r, 'expire', lambda *a, **k: None)
+    fake = types.SimpleNamespace(
+        incr=lambda *a, **k: 1,
+        expire=lambda *a, **k: None,
+    )
+    monkeypatch.setattr(cr, 'get_redis', lambda: fake)
 
 
 def test_manifest_returns_manifest():

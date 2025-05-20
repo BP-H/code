@@ -5,6 +5,7 @@ from pydantic import BaseModel
 import os
 import time
 import redis
+import fakeredis
 import yaml
 import pathlib
 import openai
@@ -20,15 +21,20 @@ BASE = pathlib.Path(__file__).parent.parent
 PERSONA_DIR = BASE / "personas"
 MANIFEST = BASE / "manifest.yaml"
 PROMPTS = {}
-# Allow the Redis host and port to be configured via environment variables so
-# the API can connect to external instances when needed. Prefer a single
-# REDIS_URL if provided for full flexibility.
-redis_url = os.getenv("REDIS_URL")
-if not redis_url:
-    host = os.getenv("REDIS_HOST", "redis")
-    port = int(os.getenv("REDIS_PORT", "6379"))
-    redis_url = f"redis://{host}:{port}/0"
-r = redis.from_url(redis_url, decode_responses=True)
+_redis_client = None
+
+
+def get_redis():
+    """Return a Redis client or a fakeredis stub when no REDIS_URL."""
+    global _redis_client
+    if _redis_client is None:
+        redis_url = os.getenv("REDIS_URL")
+        if redis_url:
+            _redis_client = redis.from_url(redis_url, decode_responses=True)
+        else:
+            _redis_client = fakeredis.FakeRedis()
+    return _redis_client
+
 app = FastAPI(title="GPT Frenzy API")
 
 # --- CORS so browsers, WebGL & mobile apps can hit us directly ----------
@@ -110,6 +116,7 @@ class Msg(BaseModel):
 
 def rate_limit(ip, limit=60):
     key = f"rl:{ip}:{int(time.time())//60}"
+    r = get_redis()
     try:
         count = r.incr(key)
         # Expire first so new keys always get a TTL even when over limit
