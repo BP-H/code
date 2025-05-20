@@ -124,17 +124,6 @@ if 'httpx' not in sys.modules:
 from fastapi.testclient import TestClient
 import types as _types
 from api import character_router as cr
-import collections
-
-
-def _mock_rate_limit(monkeypatch):
-    fake = types.SimpleNamespace(
-        incr=lambda *a, **k: 1,
-        expire=lambda *a, **k: None,
-    )
-    monkeypatch.setattr(cr, 'r', fake)
-    monkeypatch.setattr(cr, '_fallback_counter', collections.Counter())
-
 
 def test_manifest_returns_manifest():
     with TestClient(cr.app) as client:
@@ -144,7 +133,6 @@ def test_manifest_returns_manifest():
 
 
 def test_chat(monkeypatch):
-    _mock_rate_limit(monkeypatch)
 
     class Choice:
         message = _types.SimpleNamespace(content='hi')
@@ -160,7 +148,6 @@ def test_chat(monkeypatch):
 
 
 def test_chat_stream(monkeypatch):
-    _mock_rate_limit(monkeypatch)
 
     def fake_create(*args, **kwargs):
         assert kwargs.get('stream') is True
@@ -180,7 +167,6 @@ def test_chat_stream(monkeypatch):
 
 
 def test_chat_unknown_persona(monkeypatch):
-    _mock_rate_limit(monkeypatch)
 
     def boom(*args, **kwargs):
         raise AssertionError("should not be called")
@@ -193,7 +179,6 @@ def test_chat_unknown_persona(monkeypatch):
 
 
 def test_chat_stream_unknown_persona(monkeypatch):
-    _mock_rate_limit(monkeypatch)
 
     def boom(*args, **kwargs):
         raise AssertionError("should not be called")
@@ -206,7 +191,6 @@ def test_chat_stream_unknown_persona(monkeypatch):
 
 
 def test_chat_openai_error(monkeypatch):
-    _mock_rate_limit(monkeypatch)
 
     def fake_create(*args, **kwargs):
         raise RuntimeError("bad boom")
@@ -219,7 +203,6 @@ def test_chat_openai_error(monkeypatch):
 
 
 def test_chat_stream_openai_error(monkeypatch):
-    _mock_rate_limit(monkeypatch)
 
     def fake_create(*args, **kwargs):
         raise RuntimeError("kaboom")
