@@ -21,6 +21,7 @@ import yaml
 
 class PersonaInstance:
     """Wrapper around a persona implementation enforcing capability flags."""
+
     def __init__(self, impl: Any, caps: Iterable[str]):
         """Create a new instance backed by ``impl`` with allowed ``caps``."""
 
