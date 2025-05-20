@@ -139,3 +139,29 @@ def test_merge_endpoint_returns_text(monkeypatch, tmp_path):
         resp = client.post("/merge", json=1)
         assert resp.status_code == 200
         assert resp.json() == {"text": "hello\n\nworld"}
+
+
+def test_merge_endpoint_missing_instruction(monkeypatch, tmp_path):
+    know = tmp_path / "knowledge.txt"
+    know.write_text("data")
+
+    monkeypatch.setattr(ps, "PERSONAS", {"1": ("Test", "instruction.txt", "knowledge.txt")})
+    monkeypatch.setattr(ps, "find_file", lambda f: str(tmp_path / f))
+
+    with TestClient(app.app) as client:
+        resp = client.post("/merge", json=1)
+        assert resp.status_code == 404
+        assert resp.json() == {"detail": "Instruction or knowledge file missing"}
+
+
+def test_merge_endpoint_missing_knowledge(monkeypatch, tmp_path):
+    instr = tmp_path / "instruction.txt"
+    instr.write_text("stuff")
+
+    monkeypatch.setattr(ps, "PERSONAS", {"1": ("Test", "instruction.txt", "knowledge.txt")})
+    monkeypatch.setattr(ps, "find_file", lambda f: str(tmp_path / f))
+
+    with TestClient(app.app) as client:
+        resp = client.post("/merge", json=1)
+        assert resp.status_code == 404
+        assert resp.json() == {"detail": "Instruction or knowledge file missing"}
