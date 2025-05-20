@@ -33,7 +33,20 @@ def test_csharp_client_streaming():
         try:
             port = server.server_address[1]
             tmp = Path(tempfile.mkdtemp())
-            subprocess.check_call([_dotnet(), "new", "console", "--output", str(tmp)])
+            subprocess.check_call([
+                _dotnet(),
+                "new",
+                "console",
+                "--output",
+                str(tmp),
+            ])
+            subprocess.check_call([
+                _dotnet(),
+                "add",
+                str(tmp),
+                "package",
+                "Newtonsoft.Json",
+            ])
             root = Path(__file__).resolve().parents[1]
             (tmp / "GptFrenzyClient.cs").write_text(Path(root / "sdk/csharp/GptFrenzyClient.cs").read_text())
             (tmp / "Program.cs").write_text(textwrap.dedent(f"""
@@ -73,7 +86,20 @@ def test_csharp_client_stream_error():
         try:
             port = server.server_address[1]
             tmp = Path(tempfile.mkdtemp())
-            subprocess.check_call([_dotnet(), "new", "console", "--output", str(tmp)])
+            subprocess.check_call([
+                _dotnet(),
+                "new",
+                "console",
+                "--output",
+                str(tmp),
+            ])
+            subprocess.check_call([
+                _dotnet(),
+                "add",
+                str(tmp),
+                "package",
+                "Newtonsoft.Json",
+            ])
             root = Path(__file__).resolve().parents[1]
             (tmp / "GptFrenzyClient.cs").write_text(Path(root / "sdk/csharp/GptFrenzyClient.cs").read_text())
             (tmp / "Program.cs").write_text(textwrap.dedent(f"""
