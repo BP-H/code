@@ -5,13 +5,13 @@ spawn system. Real persona modules may override some or all methods, but the
 protocol consists of three optional hooks in addition to initialization:
 
 ``generate(text)``
-    Return the persona's textual response to ``text``.
+    Coroutine returning the persona's textual response to ``text``.
 
 ``speak(audio=None)``
-    Handle text-to-speech or audio processing if the persona supports voice.
+    Coroutine that handles text-to-speech or audio processing if supported.
 
 ``embody(*args, **kwargs)``
-    Consume realtime embodiment data for animation or other effects.
+    Coroutine consuming realtime embodiment data for animation or other effects.
 """
 
 
@@ -26,17 +26,17 @@ class Persona:
         self.host = host
         self.path = persona_path
 
-    def generate(self, text: str):
+    async def generate(self, text: str):
         """Return the persona's response to ``text``."""
 
         return text
 
-    def speak(self, audio=None):
+    async def speak(self, audio=None):
         """Optionally process or synthesize ``audio``."""
 
         return audio
 
-    def embody(self, *args, **kwargs):
+    async def embody(self, *args, **kwargs):
         """Accept realtime embodiment data."""
 
         return None
