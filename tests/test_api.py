@@ -198,3 +198,30 @@ def test_chat_stream_unknown_persona(monkeypatch):
         resp = client.post('/chat/stream', json={'character': 'bogus', 'message': 'hi'})
         assert resp.status_code == 404
         assert resp.json() == {'detail': 'Persona not found'}
+
+
+def test_chat_openai_error(monkeypatch):
+    _mock_rate_limit(monkeypatch)
+
+    def fake_create(*args, **kwargs):
+        raise RuntimeError("bad boom")
+
+    monkeypatch.setattr(cr.client.chat.completions, 'create', fake_create)
+    with TestClient(cr.app) as client:
+        resp = client.post('/chat', json={'character': 'blueprint-nova', 'message': 'hi'})
+        assert resp.status_code == 502
+        assert 'bad boom' in resp.json()['detail']
+
+
+def test_chat_stream_openai_error(monkeypatch):
+    _mock_rate_limit(monkeypatch)
+
+    def fake_create(*args, **kwargs):
+        raise RuntimeError("kaboom")
+
+    monkeypatch.setattr(cr.client.chat.completions, 'create', fake_create)
+    with TestClient(cr.app) as client:
+        resp = client.post('/chat/stream', json={'character': 'blueprint-nova', 'message': 'hi'})
+        assert resp.status_code == 502
+        assert 'kaboom' in resp.json()['detail']
+

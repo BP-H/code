@@ -137,12 +137,12 @@ def chat(req: Msg, request: Request):
             .choices[0]
             .message.content
         )
-    except openai.OpenAIError as exc:
-        log.exception("OpenAI API request failed: %s", exc)
-        raise HTTPException(status_code=502, detail="Upstream API error") from exc
     except Exception as exc:
-        log.exception("Unexpected error during OpenAI request: %s", exc)
-        raise HTTPException(status_code=502, detail="Upstream API error") from exc
+        log.exception("OpenAI API request failed: %s", exc)
+        raise HTTPException(
+            status_code=502,
+            detail=f"⚠️ Sorry, something went wrong: {exc}"
+        ) from exc
     return {"reply": reply}
 
 
@@ -166,12 +166,12 @@ def chat_stream(req: Msg, request: Request):
                 if "content" in c.choices[0].delta:
                     token = c.choices[0].delta.content
                     yield f"data: {token}\n\n"
-        except openai.OpenAIError as exc:
-            log.exception("OpenAI API request failed: %s", exc)
-            raise HTTPException(status_code=502, detail="Upstream API error") from exc
         except Exception as exc:
-            log.exception("Unexpected error during OpenAI request: %s", exc)
-            raise HTTPException(status_code=502, detail="Upstream API error") from exc
+            log.exception("OpenAI API request failed: %s", exc)
+            raise HTTPException(
+                status_code=502,
+                detail=f"⚠️ Sorry, something went wrong: {exc}"
+            ) from exc
 
     return StreamingResponse(gen(), media_type="text/event-stream")
 

@@ -27,16 +27,13 @@ async def main(persona_dir: str, token: str) -> None:
             return
         try:
             reply = await persona.generate(message.content)
+            await message.channel.send(reply)
         except Exception as exc:  # pragma: no cover - runtime safety
-            log.exception("Error generating reply: %s", exc)
+            log.exception("Failed to handle message: %s", exc)
             try:
-                await message.channel.send(
-                    "An error occurred while generating a response."
-                )
+                await message.channel.send("⚠️ Sorry, something went wrong")
             except Exception as send_exc:  # pragma: no cover - logging only
                 log.exception("Failed to send error message: %s", send_exc)
-        else:
-            await message.channel.send(reply)
 
     try:
         await client.start(token)
