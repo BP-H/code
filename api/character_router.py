@@ -93,9 +93,6 @@ def _prime_prompts():
             )
         except FileNotFoundError as exc:
             log.warning("Prompt file for '%s' missing: %s", pid, exc)
-        except yaml.YAMLError as exc:
-            log.warning("Invalid YAML for '%s': %s", pid, exc)
-
 
 _prime_prompts()
 
