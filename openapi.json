@@ -1,10 +1,65 @@
 {
   "openapi": "3.0.2",
   "info": {
-    "title": "GPT Frenzy API",
+    "title": "Persona Selector API",
     "version": "0.1.0"
   },
   "paths": {
+    "/personas": {
+      "get": {
+        "summary": "Get Personas",
+        "description": "Return available persona IDs.",
+        "operationId": "get_personas_personas_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/merge": {
+      "post": {
+        "summary": "Merge",
+        "description": "Return merged instruction and knowledge text.",
+        "operationId": "merge_merge_post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Id",
+              "type": "integer"
+            },
+            "name": "id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/chat": {
       "post": {
         "summary": "Chat",

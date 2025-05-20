@@ -56,8 +56,11 @@ if __name__ == "__main__":
 
         from api.character_router import app as character_app
 
+        # Mount the character API so our spec includes those routes
+        app.include_router(character_app.router)
+
         with open("openapi.json", "w", encoding="utf-8") as f:
-            json.dump(character_app.openapi(), f, indent=2)
+            json.dump(app.openapi(), f, indent=2)
     else:
         import uvicorn
 
