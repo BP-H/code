@@ -4,7 +4,7 @@ By submitting code you agree it remains MIT-licensed and you keep your copyright
 
 ### Code style
 
-* Format all Python code with **[Black](https://black.readthedocs.io/)**.
+* Format all Python code with **[Black](https://black.readthedocs.io/)** (install via `pip install -r requirements-dev.txt`).
   Run `black .` before submitting a pull request.
 * Keep the repository compatible with Python 3.10 or newer.
 
@@ -25,12 +25,16 @@ By submitting code you agree it remains MIT-licensed and you keep your copyright
 
 ### Running tests
 
-Automated tests use [pytest](https://pytest.readthedocs.io/). After installing
-pytest, run:
+Install development dependencies with:
+
+```bash
+python3 -m pip install -r requirements-dev.txt
+```
+
+Automated tests use [pytest](https://pytest.readthedocs.io/). Run:
 
 ```bash
 python3 -m pytest
 ```
 
 All tests live in the `tests/` directory.
-
