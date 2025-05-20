@@ -3,11 +3,16 @@ from __future__ import annotations
 """Load persona implementations from disk and spawn them as objects.
 
 The spawn system expects each persona to live in its own directory with a
-``manifest.yaml`` file describing its capabilities and entry point. The
-``launch`` function reads that manifest, dynamically imports the ``Persona``
-class from ``persona.py`` (or falls back to :mod:`gptfrenzy.persona_loader`),
-and returns a :class:`PersonaInstance` wrapper. Capability flags in the manifest
-determine which methods are exposed on the spawned instance.
+``manifest.yaml`` file. ``launch()`` reads that manifest, dynamically imports
+the ``Persona`` class from ``persona.py`` (or falls back to
+:mod:`gptfrenzy.persona_loader`), and returns a :class:`PersonaInstance`
+wrapper. Capability flags in the manifest determine which methods are exposed
+on the spawned instance.
+
+``manifest.yaml`` fields include ``sap_version``, ``assets``, ``capabilities``
+and ``license_ref``. A new optional ``entrypoint`` key may point to an
+alternate ``"module:function"`` that ``launch()`` will import and call
+instead of the default launcher.
 """
 
 import importlib
