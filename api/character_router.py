@@ -10,6 +10,8 @@ import pathlib
 import openai
 import logging
 
+log = logging.getLogger(__name__)
+
 client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 # Allow callers to set the OpenAI model via env with a sensible default so we
 # can easily swap models when deploying.
@@ -95,17 +97,24 @@ def chat(req: Msg, request: Request):
     rate_limit(request.client.host)
     if req.character not in PROMPTS:
         raise HTTPException(status_code=404, detail="Persona not found")
-    reply = (
-        client.chat.completions.create(
-            model=OPENAI_MODEL,
-            messages=[
-                {"role": "system", "content": PROMPTS[req.character]},
-                {"role": "user", "content": req.message},
-            ],
+    try:
+        reply = (
+            client.chat.completions.create(
+                model=OPENAI_MODEL,
+                messages=[
+                    {"role": "system", "content": PROMPTS[req.character]},
+                    {"role": "user", "content": req.message},
+                ],
+            )
+            .choices[0]
+            .message.content
         )
-        .choices[0]
-        .message.content
-    )
+    except openai.OpenAIError as exc:
+        log.exception("OpenAI API request failed: %s", exc)
+        raise HTTPException(status_code=502, detail="Upstream API error") from exc
+    except Exception as exc:
+        log.exception("Unexpected error during OpenAI request: %s", exc)
+        raise HTTPException(status_code=502, detail="Upstream API error") from exc
     return {"reply": reply}
 
 
@@ -116,18 +125,25 @@ def chat_stream(req: Msg, request: Request):
         raise HTTPException(status_code=404, detail="Persona not found")
 
     def gen():
-        resp = client.chat.completions.create(
-            model=OPENAI_MODEL,
-            messages=[
-                {"role": "system", "content": PROMPTS[req.character]},
-                {"role": "user", "content": req.message},
-            ],
-            stream=True,
-        )
-        for c in resp:
-            if "content" in c.choices[0].delta:
-                token = c.choices[0].delta.content
-                yield f"data: {token}\n\n"
+        try:
+            resp = client.chat.completions.create(
+                model=OPENAI_MODEL,
+                messages=[
+                    {"role": "system", "content": PROMPTS[req.character]},
+                    {"role": "user", "content": req.message},
+                ],
+                stream=True,
+            )
+            for c in resp:
+                if "content" in c.choices[0].delta:
+                    token = c.choices[0].delta.content
+                    yield f"data: {token}\n\n"
+        except openai.OpenAIError as exc:
+            log.exception("OpenAI API request failed: %s", exc)
+            raise HTTPException(status_code=502, detail="Upstream API error") from exc
+        except Exception as exc:
+            log.exception("Unexpected error during OpenAI request: %s", exc)
+            raise HTTPException(status_code=502, detail="Upstream API error") from exc
 
     return StreamingResponse(gen(), media_type="text/event-stream")
 
