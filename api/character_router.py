@@ -27,7 +27,7 @@ if not redis_url:
     port = int(os.getenv("REDIS_PORT", "6379"))
     redis_url = f"redis://{host}:{port}/0"
 r = redis.from_url(redis_url, decode_responses=True)
-app = FastAPI()
+app = FastAPI(title="GPT Frenzy API")
 
 # --- CORS so browsers, WebGL & mobile apps can hit us directly ----------
 app.add_middleware(
