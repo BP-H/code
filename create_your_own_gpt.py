@@ -11,7 +11,8 @@ def main() -> None:
     and quick-reference stub."""
 
     today = datetime.date.today()
-    ROOT = pathlib.Path("CREATE_YOUR_OWN_GPT")
+    script_dir = pathlib.Path(__file__).resolve().parent
+    ROOT = script_dir / "CREATE_YOUR_OWN_GPT"
     ROOT.mkdir(exist_ok=True)
 
     (ROOT / "README.md").write_text(
