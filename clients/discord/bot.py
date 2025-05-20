@@ -1,6 +1,7 @@
 """Minimal Discord bot using the spawn system."""
 
 import asyncio
+import logging
 import sys
 
 try:
@@ -10,6 +11,8 @@ except ImportError:  # pragma: no cover - optional dependency
     raise SystemExit(1)
 
 from gptfrenzy.spawn import launch
+
+log = logging.getLogger(__name__)
 
 
 async def main(persona_dir: str, token: str) -> None:
@@ -22,8 +25,18 @@ async def main(persona_dir: str, token: str) -> None:
     async def on_message(message: discord.Message) -> None:
         if message.author.bot:
             return
-        reply = await persona.generate(message.content)
-        await message.channel.send(reply)
+        try:
+            reply = await persona.generate(message.content)
+        except Exception as exc:  # pragma: no cover - runtime safety
+            log.exception("Error generating reply: %s", exc)
+            try:
+                await message.channel.send(
+                    "An error occurred while generating a response."
+                )
+            except Exception as send_exc:  # pragma: no cover - logging only
+                log.exception("Failed to send error message: %s", send_exc)
+        else:
+            await message.channel.send(reply)
 
     await client.start(token)
 
