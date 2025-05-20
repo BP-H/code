@@ -71,3 +71,24 @@ def test_bad_manifest_yaml(tmp_path):
         assert "manifest.yaml missing or unreadable" in str(e)
     else:
         assert False, "ValueError not raised"
+
+
+def test_async_speak(tmp_path):
+    d = tmp_path / "persona"
+    d.mkdir()
+    manifest = {
+        "sap_version": "0.3",
+        "entrypoint": "gptfrenzy.spawn:launch",
+        "assets": [],
+        "capabilities": ["text", "voice"],
+        "license_ref": "./LICENSE_PERSONAS",
+    }
+    (d / "manifest.yaml").write_text(yaml.safe_dump(manifest))
+    (d / "persona.py").write_text(
+        "class Persona:\n"
+        "    def __init__(self, **k): pass\n"
+        "    async def generate(self, t): return t\n"
+        "    async def speak(self, a=None): return 'async'"
+    )
+    inst = launch("host", str(d))
+    assert asyncio.run(inst.speak()) == "async"

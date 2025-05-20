@@ -21,6 +21,7 @@ import yaml
 
 class PersonaInstance:
     """Wrapper around a persona implementation enforcing capability flags."""
+
     def __init__(self, impl: Any, caps: Iterable[str]):
         """Create a new instance backed by ``impl`` with allowed ``caps``."""
 
@@ -37,14 +38,17 @@ class PersonaInstance:
             result = await result
         return result
 
-    def speak(self, audio: Any | None = None) -> Any:
+    async def speak(self, audio: Any | None = None) -> Any:
         """Delegate text-to-speech to the persona if allowed."""
 
         if "voice" not in self.capabilities:
             raise RuntimeError("voice capability unavailable")
         if not hasattr(self._impl, "speak"):
             raise AttributeError("Persona missing speak()")
-        return self._impl.speak(audio)
+        result = self._impl.speak(audio)
+        if asyncio.iscoroutine(result):
+            result = await result
+        return result
 
     def embody(self, *args: Any, **kwargs: Any) -> Any:
         """Forward embodiment data to the persona if supported."""
