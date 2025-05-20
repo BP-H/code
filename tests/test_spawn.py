@@ -1,4 +1,5 @@
 import yaml
+import asyncio
 from gptfrenzy.spawn import launch, make_manifest
 
 
@@ -10,7 +11,7 @@ def test_manifest_load_success(tmp_path):
         "class Persona:\n    def __init__(self, **k): pass\n    def generate(self, t): return t.upper()"
     )
     inst = launch("discord", str(d))
-    assert inst.generate("hi") == "HI"
+    assert asyncio.run(inst.generate("hi")) == "HI"
 
 
 def test_capability_flags(tmp_path):

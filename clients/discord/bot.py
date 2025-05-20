@@ -18,7 +18,7 @@ async def main(persona_dir: str, token: str) -> None:
     async def on_message(message: discord.Message) -> None:
         if message.author.bot:
             return
-        reply = persona.generate(message.content)
+        reply = await persona.generate(message.content)
         await message.channel.send(reply)
 
     await client.start(token)
