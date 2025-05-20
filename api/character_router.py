@@ -10,6 +10,7 @@ import yaml
 import pathlib
 import openai
 import logging
+import functools
 
 log = logging.getLogger(__name__)
 
@@ -120,6 +121,20 @@ from collections import Counter
 _fallback_counter = Counter()
 
 
+def handle_errors(func):
+    """Translate common exceptions into HTTP errors."""
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except FileNotFoundError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    return wrapper
+
+
 def rate_limit(ip, limit=60):
     key = f"rl:{ip}:{int(time.time())//60}"
     try:
@@ -137,6 +152,7 @@ def rate_limit(ip, limit=60):
 
 
 @app.post("/chat")
+@handle_errors
 def chat(req: Msg, request: Request):
     rate_limit(request.client.host)
     if req.character not in PROMPTS:
@@ -163,6 +179,7 @@ def chat(req: Msg, request: Request):
 
 
 @app.post("/chat/stream")
+@handle_errors
 def chat_stream(req: Msg, request: Request):
     rate_limit(request.client.host)
     if req.character not in PROMPTS:
@@ -195,23 +212,20 @@ def chat_stream(req: Msg, request: Request):
 # ------------------------------------------------------------------------
 # Health-check for load balancers / Kubernetes
 @app.get("/")
+@handle_errors
 def root():
     return {"status": "ok"}
 
 
 # Serve manifest as JSON so SDKs auto-discover characters
 @app.get("/manifest")
+@handle_errors
 def get_manifest():
-    try:
-        return _load_manifest()
-    except FileNotFoundError as exc:
-        raise HTTPException(status_code=404, detail="Manifest file not found") from exc
-    except (yaml.YAMLError, ValueError) as exc:
-        log.warning("Failed to load manifest: %s", exc)
-        raise HTTPException(status_code=500, detail="Invalid manifest file") from exc
+    return _load_manifest()
 
 
 @app.get("/manifest.yaml", response_class=PlainTextResponse)
+@handle_errors
 def get_manifest_yaml():
     """Return the raw manifest file as plain text."""
     return MANIFEST.read_text(encoding="utf-8")
@@ -222,6 +236,7 @@ class MergeRequest(BaseModel):
 
 
 @app.post("/merge")
+@handle_errors
 def merge(req: MergeRequest):
     """Return merged instruction and knowledge text for persona ``id``."""
     persona_dir = PERSONA_DIR / str(req.id)
