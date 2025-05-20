@@ -98,6 +98,7 @@ def launch(host: str, persona_path: str, **kwargs: Any) -> PersonaInstance:
 def make_manifest(persona_dir: str) -> Path:
     """Write a minimal ``manifest.yaml`` to ``persona_dir`` and return its path."""
     path = Path(persona_dir) / "manifest.yaml"
+    Path(persona_dir).mkdir(parents=True, exist_ok=True)
     manifest = {
         "sap_version": "0.3",
         "entrypoint": "gptfrenzy.spawn:launch",
