@@ -57,10 +57,11 @@ class Persona:
         self.host = host
         self.path = persona_path
 
-    def generate(self, text: str):
+    async def generate(self, text: str):
         return text.upper()
 ```
 
 Place the directory anywhere accessible by your application and call
 `launch("discord", "./my_persona")` (replace the host string as needed).
-The returned `PersonaInstance` can then be used in your bot or game.
+The returned `PersonaInstance` exposes an async `generate()` method that
+you can await in your bot or game.
