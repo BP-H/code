@@ -114,17 +114,26 @@ class Msg(BaseModel):
     message: str
 
 
+import os, redis, functools
+r = redis.from_url(os.getenv("REDIS_URL", "redis://localhost:6379"), decode_responses=True)
+from collections import Counter
+_fallback_counter = Counter()
+
+
 def rate_limit(ip, limit=60):
     key = f"rl:{ip}:{int(time.time())//60}"
-    r = get_redis()
     try:
         count = r.incr(key)
-        # Expire first so new keys always get a TTL even when over limit
-        r.expire(key, 61)
-        if count > limit:
-            raise HTTPException(429, "Rate limit exceeded")
-    except redis.exceptions.ConnectionError as exc:
-        raise HTTPException(status_code=503, detail="Rate limiter unavailable") from exc
+    except redis.RedisError:
+        _fallback_counter[key] += 1
+        count = _fallback_counter[key]
+    else:
+        try:
+            r.expire(key, 61)
+        except redis.RedisError:
+            pass
+    if count > limit:
+        raise HTTPException(429, "Rate limit exceeded")
 
 
 @app.post("/chat")
