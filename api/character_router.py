@@ -215,3 +215,22 @@ def get_manifest():
 def get_manifest_yaml():
     """Return the raw manifest file as plain text."""
     return MANIFEST.read_text(encoding="utf-8")
+
+
+class MergeRequest(BaseModel):
+    id: int
+
+
+@app.post("/merge")
+def merge(req: MergeRequest):
+    """Return merged instruction and knowledge text for persona ``id``."""
+    persona_dir = PERSONA_DIR / str(req.id)
+    instr = next(persona_dir.glob("*_GPT_INSTRUCTIONS.txt"), None)
+    know = next(persona_dir.glob("*_DEEP_KNOWLEDGE_*.txt"), None)
+    if not instr or not know:
+        raise HTTPException(status_code=422, detail="Instruction or knowledge file missing")
+    try:
+        merged = instr.read_text(encoding="utf-8").rstrip() + "\n\n" + know.read_text(encoding="utf-8").lstrip()
+    except FileNotFoundError:
+        raise HTTPException(status_code=422, detail="Instruction or knowledge file missing")
+    return {"merged": merged}
