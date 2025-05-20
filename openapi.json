@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.2",
   "info": {
-    "title": "FastAPI",
+    "title": "GPT Frenzy API",
     "version": "0.1.0"
   },
   "paths": {
@@ -103,6 +103,25 @@
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/manifest.yaml": {
+      "get": {
+        "summary": "Get Manifest Yaml",
+        "description": "Return the raw manifest file as plain text.",
+        "operationId": "get_manifest_yaml_manifest_yaml_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
               }
             }
           }
