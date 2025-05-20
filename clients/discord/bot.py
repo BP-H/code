@@ -38,7 +38,11 @@ async def main(persona_dir: str, token: str) -> None:
         else:
             await message.channel.send(reply)
 
-    await client.start(token)
+    try:
+        await client.start(token)
+    except discord.LoginFailure:
+        log.error("Invalid Discord token")
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":
