@@ -13,8 +13,10 @@ import os
 from typing import Dict, List, Tuple
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# ``SEARCH_DIRS`` is initialized in ``main()`` so repeated calls reset it.
-SEARCH_DIRS: List[str] = []
+# Default search locations for persona files. ``main()`` resets this list
+# before applying any command-line options so repeated calls behave
+# consistently.
+SEARCH_DIRS: List[str] = [BASE_DIR, os.path.join(BASE_DIR, "personas")]
 
 
 def load_personas(dirs: List[str]) -> Dict[str, Tuple[str, str, str]]:
