@@ -124,6 +124,7 @@ if 'httpx' not in sys.modules:
 from fastapi.testclient import TestClient
 import types as _types
 from api import character_router as cr
+import collections
 
 
 def _mock_rate_limit(monkeypatch):
@@ -131,7 +132,8 @@ def _mock_rate_limit(monkeypatch):
         incr=lambda *a, **k: 1,
         expire=lambda *a, **k: None,
     )
-    monkeypatch.setattr(cr, 'get_redis', lambda: fake)
+    monkeypatch.setattr(cr, 'r', fake)
+    monkeypatch.setattr(cr, '_fallback_counter', collections.Counter())
 
 
 def test_manifest_returns_manifest():

@@ -1,4 +1,6 @@
 import redis
+import collections
+import pytest
 from fastapi import HTTPException
 from api import character_router as cr
 from api import rate_limit
@@ -10,14 +12,12 @@ def test_rate_limit_redis_down(monkeypatch):
             raise redis.exceptions.ConnectionError
 
         def expire(self, *args, **kwargs):
-            pass
+            raise redis.exceptions.ConnectionError
 
-    monkeypatch.setattr(cr, "get_redis", lambda: BoomRedis())
-    try:
-        rate_limit("1.1.1.1")
-    except HTTPException as exc:
-        assert exc.status_code == 503
-        assert exc.detail == "Rate limiter unavailable"
-    else:
-        assert False, "HTTPException not raised"
+    monkeypatch.setattr(cr, "r", BoomRedis())
+    monkeypatch.setattr(cr, "_fallback_counter", collections.Counter())
+    rate_limit("1.1.1.1", limit=1)
+    with pytest.raises(HTTPException) as exc:
+        rate_limit("1.1.1.1", limit=1)
+    assert exc.value.status_code == 429
 
