@@ -27,17 +27,17 @@
         "summary": "Merge",
         "description": "Return merged instruction and knowledge text.",
         "operationId": "merge_merge_post",
-        "parameters": [
-          {
-            "required": true,
-            "schema": {
-              "title": "Id",
-              "type": "integer"
-            },
-            "name": "id",
-            "in": "query"
-          }
-        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "Id",
+                "type": "integer"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "Successful Response",

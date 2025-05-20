@@ -1,6 +1,6 @@
 import json
 import sys
-from fastapi import FastAPI, HTTPException
+from fastapi import Body, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import persona_selector as ps
 
@@ -36,7 +36,7 @@ def _merge_text(pid: str) -> str:
 
 
 @app.post("/merge")
-def merge(id: int):
+def merge(id: int = Body(...)):
     """Return merged instruction and knowledge text."""
     return {"text": _merge_text(str(id))}
 
