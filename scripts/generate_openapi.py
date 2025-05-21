@@ -3,21 +3,28 @@ from pathlib import Path
 import sys
 import types
 
-import yaml  # Ensure pyyaml is installed
-
-from gptfrenzy.core.utils import ensure_parent_dirs
-from api.character_router import app as character_app
-from app import app
+# Make repo root importable when executed from the scripts directory
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 
 # Stub optional dependencies that are unnecessary for spec generation
 sys.modules.setdefault(
     "redis",
     types.SimpleNamespace(
-        from_url=lambda *a, **kw: types.SimpleNamespace(),
-        exceptions=types.SimpleNamespace(ConnectionError=Exception),
+        Redis=lambda *a, **kw: types.SimpleNamespace(ping=lambda: None),
+        from_url=lambda *a, **kw: types.SimpleNamespace(ping=lambda: None),
+        RedisError=Exception,
+        exceptions=types.SimpleNamespace(
+            ConnectionError=Exception, RedisError=Exception
+        ),
     ),
 )
 sys.modules.setdefault("openai", types.SimpleNamespace(OpenAI=lambda *a, **kw: object()))
+sys.modules.setdefault("yaml", types.SimpleNamespace(safe_load=lambda *_: []))
+
+from gptfrenzy.core.utils import ensure_parent_dirs
+from api.character_router import app as character_app
+from app import app
 
 # Mount the character API so the spec includes those routes
 app.include_router(character_app.router)

@@ -24,10 +24,8 @@ jobs:
         run: pip install --no-cache-dir --require-hashes -r requirements-lock.txt --break-system-packages
       - name: Run tests
         run: pytest -q
-      - name: Generate OpenAPI spec
-        run: make openapi
-      - name: Fail on OpenAPI diff
-        run: git diff --exit-code openapi.json
+      - name: Verify OpenAPI spec
+        run: make check-openapi
       - name: Check requirements drift
         run: |
           pip-compile --dry-run requirements.in
