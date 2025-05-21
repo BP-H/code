@@ -150,7 +150,7 @@ and edit the values, or override them in `docker-compose.yml`:
 
 ### Updating `openapi.json`
 
-Run `make openapi` to regenerate `openapi.json`. This command loads `api.character_router:app` so the resulting spec documents `/chat`, `/chat/stream`, and `/manifest`. Use `make check-openapi` to ensure it stays in sync.
+Run `make openapi` to regenerate `openapi.json`. This command loads `api.character_router:app` so the resulting spec documents `/chat`, `/chat/stream`, and `/manifest`. Use `make openapi-check` to ensure it stays in sync and committed.
 
 
 ## Web Chat Widget
