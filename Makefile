@@ -1,3 +1,3 @@
 .PHONY: openapi
 openapi:
-    python app.py --openapi
+	python scripts/generate_openapi.py
