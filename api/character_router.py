@@ -16,8 +16,12 @@ log = logging.getLogger(__name__)
 
 _api_key = os.getenv("OPENAI_API_KEY")
 if not _api_key:
-    raise RuntimeError("OPENAI_API_KEY environment variable not set")
-client = openai.OpenAI(api_key=_api_key)
+    log.warning(
+        "OPENAI_API_KEY not set. OpenAI functionality will be disabled until a key is provided."
+    )
+    client = None
+else:
+    client = openai.OpenAI(api_key=_api_key)
 # Allow callers to set the OpenAI model via env with a sensible default so we
 # can easily swap models when deploying.
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4")
@@ -39,6 +43,7 @@ def get_redis():
 
     # Allow developers to force fakeredis via env for easier local testing
     if os.getenv("USE_FAKE_REDIS"):
+        log.warning("Using in-memory Redis because USE_FAKE_REDIS is set")
         _redis_client = fakeredis.StrictRedis()
         return _redis_client
 
@@ -47,10 +52,15 @@ def get_redis():
         try:
             client = redis.from_url(redis_url, decode_responses=True)
             client.ping()
+            log.info("Connected to Redis at %s", redis_url)
             _redis_client = client
             return _redis_client
-        except redis.RedisError:
-            pass
+        except redis.RedisError as exc:
+            log.warning(
+                "Redis at %s unreachable: %s. Falling back to fakeredis.",
+                redis_url,
+                exc,
+            )
 
     # Fall back to host/port if provided
     host = os.getenv("REDIS_HOST", "localhost")
@@ -58,8 +68,12 @@ def get_redis():
     try:
         client = redis.Redis(host=host, port=port, decode_responses=True)
         client.ping()
+        log.info("Connected to Redis at %s:%s", host, port)
         _redis_client = client
-    except redis.RedisError:
+    except redis.RedisError as exc:
+        log.warning(
+            "Redis %s:%s unreachable: %s. Using fakeredis.", host, port, exc
+        )
         _redis_client = fakeredis.StrictRedis()
     return _redis_client
 
@@ -134,6 +148,9 @@ def _prime_prompts():
 
 _prime_prompts()
 
+# Prime Redis connection at startup so failures are logged early
+get_redis()
+
 
 class Msg(BaseModel):
     character: str
@@ -174,6 +191,7 @@ def rate_limit(ip, limit=60):
             pass
     except redis.RedisError:
         # Switch to in-memory fallback when Redis is unreachable
+        log.warning("Redis unreachable during rate limit check. Using fakeredis")
         global _redis_client
         _redis_client = fakeredis.StrictRedis()
         r = _redis_client
@@ -186,6 +204,8 @@ def rate_limit(ip, limit=60):
 @handle_errors
 def chat(req: Msg, request: Request):
     rate_limit(request.client.host)
+    if client is None:
+        raise HTTPException(503, "OpenAI API key not configured")
     if req.character not in PROMPTS:
         raise HTTPException(status_code=404, detail="Persona not found")
     try:
@@ -210,6 +230,8 @@ def chat(req: Msg, request: Request):
 @handle_errors
 def chat_stream(req: Msg, request: Request):
     rate_limit(request.client.host)
+    if client is None:
+        raise HTTPException(503, "OpenAI API key not configured")
     if req.character not in PROMPTS:
         raise HTTPException(status_code=404, detail="Persona not found")
 
