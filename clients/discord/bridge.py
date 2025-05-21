@@ -47,16 +47,26 @@ async def send_stream(text: str) -> str:
 
 @client.event
 async def on_message(msg: discord.Message) -> None:
-    """Respond when the bot is mentioned or `!gpt` is used."""
+    """Respond to DMs or when the bot is mentioned or `!gpt` is used."""
     if msg.author.bot:
         return
 
     content = msg.content.strip()
     trigger = False
-    if content.startswith("!gpt"):
+
+    # Treat direct messages to the bot as triggers
+    if msg.guild is None:
+        recipients = getattr(msg.channel, "recipients", None)
+        if recipients is None:
+            recipient = getattr(msg.channel, "recipient", None)
+            recipients = [recipient] if recipient else []
+        if len(recipients) <= 1:
+            trigger = True
+
+    if not trigger and content.startswith("!gpt"):
         trigger = True
         content = content[4:].strip()
-    elif client.user and client.user.mentioned_in(msg):
+    elif not trigger and client.user and client.user.mentioned_in(msg):
         trigger = True
         content = content.replace(client.user.mention, "").strip()
 
