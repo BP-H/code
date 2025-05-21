@@ -14,3 +14,4 @@ flake8
 isort
 fakeredis==2.23.2
 rich==13.7.0
+python-dotenv==1.0.1
