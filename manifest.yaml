@@ -1,12 +1,12 @@
 - id: blueprint-nova
   name: Blueprint Nova
   prompt_file: blueprint_nova.md
-  entrypoint: gptfrenzy.spawn:launch
+  entrypoint: gptfrenzy.core.spawn:launch
   voice_id: alloy
   avatar_url: https://example.com/blueprint_nova.png
 - id: blueprint-hustler
   name: Blueprint Hustler
   prompt_file: blueprint_hustler.md
-  entrypoint: gptfrenzy.spawn:launch
+  entrypoint: gptfrenzy.core.spawn:launch
   voice_id: echo
   avatar_url: https://example.com/bph.png

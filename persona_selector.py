@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 from fastapi import HTTPException
 
-from gptfrenzy.utils import ensure_parent_dirs
+from gptfrenzy.core.utils import ensure_parent_dirs
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Default search locations for persona files. ``main()`` resets this list

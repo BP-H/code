@@ -10,7 +10,7 @@ The command is also installed as ``frenzy-spawn`` via the package entry point.
 import argparse
 from pathlib import Path
 
-from gptfrenzy.spawn import launch
+from gptfrenzy.core.spawn import launch
 
 
 def main() -> None:

@@ -1,6 +1,6 @@
 import yaml
 import asyncio
-from gptfrenzy.spawn import launch, make_manifest
+from gptfrenzy.core.spawn import launch, make_manifest
 
 
 def test_manifest_load_success(tmp_path):
@@ -19,7 +19,7 @@ def test_capability_flags(tmp_path):
     d.mkdir()
     manifest = {
         "sap_version": "0.3",
-        "entrypoint": "gptfrenzy.spawn:launch",
+        "entrypoint": "gptfrenzy.core.spawn:launch",
         "assets": [],
         "capabilities": ["text", "voice"],
         "license_ref": "./LICENSE_PERSONAS",
@@ -78,7 +78,7 @@ def test_async_speak(tmp_path):
     d.mkdir()
     manifest = {
         "sap_version": "0.3",
-        "entrypoint": "gptfrenzy.spawn:launch",
+        "entrypoint": "gptfrenzy.core.spawn:launch",
         "assets": [],
         "capabilities": ["text", "voice"],
         "license_ref": "./LICENSE_PERSONAS",
@@ -99,7 +99,7 @@ def test_async_embody(tmp_path):
     d.mkdir()
     manifest = {
         "sap_version": "0.3",
-        "entrypoint": "gptfrenzy.spawn:launch",
+        "entrypoint": "gptfrenzy.core.spawn:launch",
         "assets": [],
         "capabilities": ["text", "realtime_embodiment"],
         "license_ref": "./LICENSE_PERSONAS",

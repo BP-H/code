@@ -5,7 +5,7 @@ import types
 
 import yaml  # Ensure pyyaml is installed
 
-from gptfrenzy.utils import ensure_parent_dirs
+from gptfrenzy.core.utils import ensure_parent_dirs
 from api.character_router import app as character_app
 from app import app
 

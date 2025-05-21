@@ -5,7 +5,7 @@ from __future__ import annotations
 The spawn system expects each persona to live in its own directory with a
 ``manifest.yaml`` file. ``launch()`` reads that manifest, dynamically imports
 the ``Persona`` class from ``persona.py`` (or falls back to
-:mod:`gptfrenzy.persona_loader`), and returns a :class:`PersonaInstance`
+:mod:`gptfrenzy.core.persona_loader`), and returns a :class:`PersonaInstance`
 wrapper. Capability flags in the manifest determine which methods are exposed
 on the spawned instance.
 
@@ -23,7 +23,7 @@ import asyncio
 
 import yaml
 
-from .utils import ensure_parent_dirs
+from gptfrenzy.core.utils import ensure_parent_dirs
 
 
 class PersonaInstance:
@@ -80,7 +80,7 @@ def _load_persona_class(persona_dir: Path) -> type:
             spec.loader.exec_module(module)  # type: ignore
             if hasattr(module, "Persona"):
                 return getattr(module, "Persona")
-    loader = importlib.import_module("gptfrenzy.persona_loader")
+    loader = importlib.import_module("gptfrenzy.core.persona_loader")
     return getattr(loader, "Persona")
 
 
@@ -96,8 +96,8 @@ def launch(host: str, persona_path: str, **kwargs: Any) -> PersonaInstance:
     if manifest.get("sap_version") != "0.3":
         raise ValueError("Unsupported SAP version")
 
-    entrypoint = manifest.get("entrypoint", "gptfrenzy.spawn:launch")
-    if entrypoint != "gptfrenzy.spawn:launch":
+    entrypoint = manifest.get("entrypoint", "gptfrenzy.core.spawn:launch")
+    if entrypoint != "gptfrenzy.core.spawn:launch":
         mod_name, _, func_name = entrypoint.partition(":")
         if not mod_name or not func_name:
             raise ValueError("Invalid entrypoint")
@@ -117,7 +117,7 @@ def make_manifest(persona_dir: str) -> Path:
     Path(persona_dir).mkdir(parents=True, exist_ok=True)
     manifest = {
         "sap_version": "0.3",
-        "entrypoint": "gptfrenzy.spawn:launch",
+        "entrypoint": "gptfrenzy.core.spawn:launch",
         "assets": [],
         "capabilities": ["text"],
         "license_ref": "./LICENSE_PERSONAS",

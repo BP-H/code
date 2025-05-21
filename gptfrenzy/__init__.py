@@ -10,4 +10,4 @@ import sys
 if sys.version_info < (3, 10):
     raise RuntimeError("GPT Frenzy requires Python 3.10 or later")
 
-from .spawn import launch, make_manifest
+from gptfrenzy.core.spawn import launch, make_manifest

@@ -4,7 +4,7 @@ from pathlib import Path
 from fastapi import Body, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import persona_selector as ps
-from gptfrenzy.utils import ensure_parent_dirs
+from gptfrenzy.core.utils import ensure_parent_dirs
 
 app = FastAPI(title="Persona Selector API")
 app.add_middleware(
