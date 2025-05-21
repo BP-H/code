@@ -6,3 +6,4 @@ CREATE_YOUR_OWN_GPT/
 
 # Local environment variables
 .env
+.env.*
