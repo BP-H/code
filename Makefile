@@ -9,4 +9,4 @@ openapi-check: openapi
 check-openapi: openapi-check
 
 discord-run:
-	python clients/discord/bot.py
+       python clients/discord/bridge.py

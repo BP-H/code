@@ -4,6 +4,9 @@ import os
 
 import aiohttp
 import discord
+from dotenv import load_dotenv
+
+load_dotenv()
 
 API_URL = os.getenv("FRENZY_API_URL", "http://localhost:8000").rstrip("/")
 TOKEN = os.getenv("DISCORD_TOKEN")
