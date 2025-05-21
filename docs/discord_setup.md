@@ -7,11 +7,18 @@ from a local `.env` file using **python-dotenv**.
 1. Copy `.env.example` to `.env` and set `DISCORD_TOKEN` to your bot token.
    Adjust `FRENZY_API_URL` or `FRENZY_CHARACTER` if you use a different API host
    or persona.
-2. Run the bot:
+2. Start both the API and Discord bot with Docker Compose:
+   ```bash
+   docker-compose up
+   ```
+   Compose builds the image, launches the FastAPI server, and then runs
+   `clients/discord/bridge.py` in a separate container. Any environment values in
+   `.env` (like `DISCORD_TOKEN`) are automatically loaded.
+
+Alternatively, you can run the bot directly with Make:
    ```bash
    make discord-run
    ```
-
-The command above loads the `.env` file automatically and starts the bot. It
-only responds when a message begins with `!gpt` or mentions the bot, sending the
-streamed reply back to the same channel.
+Both methods load `.env` automatically. The bot responds whenever a message
+mentions it, begins with `!gpt`, or arrives as a DM, streaming the reply back to
+the same channel.

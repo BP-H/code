@@ -19,3 +19,15 @@ services:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+
+  discord-bot:
+    build: .
+    env_file: .env
+    command: ["python", "clients/discord/bridge.py"]
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      # Point the bot to the API container
+      - FRENZY_API_URL=${FRENZY_API_URL:-http://api:8000}
+      # Persona used by the Discord bridge (default: "blueprint-nova")
+      - FRENZY_CHARACTER=${FRENZY_CHARACTER:-blueprint-nova}
+    depends_on: [api]
