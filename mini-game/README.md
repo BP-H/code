@@ -1,5 +1,9 @@
 # Guess That Persona Mini-game
 
+**Experimental:** This folder contains a small browser game that is not yet wired
+into the main GPT Frenzy application. It serves as a standalone demo and may
+change or break without notice.
+
 This browser game challenges you to match short replies to the correct GPT Frenzy persona.
 
 ## Setup

@@ -1,3 +1,9 @@
+// Experimental mini-game
+// ---------------------
+// This file powers the "Guess That Persona" browser game. The game lives in its
+// own folder and is **not integrated** with the main GPT Frenzy app. It may
+// change or be removed in future updates.
+
 const personas = [
   {
     name: "Mimi",
