@@ -1,5 +1,4 @@
-# WARNING: Placeholder lock file.
-# TODO: Generate with 'pip-compile' to pin exact versions and hashes.
+# WARNING: This file is manually generated due to offline environment.
 discord.py==2.4.0
 fastapi==0.110.0
 httpx==0.27.0
@@ -13,5 +12,5 @@ uvicorn[standard]==0.30.0
 black
 flake8
 isort
-fakeredis
+fakeredis==2.23.2
 rich==13.7.0
