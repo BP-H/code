@@ -1,7 +1,9 @@
 # Discord Integration with Spawn System
 
-This example shows how to load a persona with `gptfrenzy.core.spawn.launch()`
-and respond to messages in Discord.
+This directory contains two scripts. The recommended approach is
+`bridge.py`, which forwards Discord messages to a running API server.
+You can also load a local persona with `bot.py` using
+`gptfrenzy.core.spawn.launch()`.
 
 1. Install `discord.py`:
    ```bash
@@ -26,9 +28,10 @@ and respond to messages in Discord.
 
 `bot.py` keeps things minimal so you can adapt it to your needs.
 
-## API Bridge
+## API Bridge (Recommended)
 
-Forward messages to the REST API instead of a local persona:
+Forward messages to the REST API instead of a local persona. This is the
+simplest way to connect Discord to an already running API:
 
 ```bash
 export DISCORD_TOKEN=YOUR_TOKEN
