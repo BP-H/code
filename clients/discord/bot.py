@@ -53,13 +53,28 @@ async def send_stream(text: str) -> str:
 
 @client.event
 async def on_message(msg: discord.Message) -> None:
+    """Respond when the bot is mentioned or `!gpt` is used."""
     if msg.author.bot:
         return
+
+    content = msg.content.strip()
+    trigger = False
+    if content.startswith("!gpt"):
+        trigger = True
+        content = content[4:].strip()
+    elif client.user and client.user.mentioned_in(msg):
+        trigger = True
+        content = content.replace(client.user.mention, "").strip()
+
+    if not trigger or not content:
+        return
+
     try:
-        reply = await send_stream(msg.content)
+        reply = await send_stream(content)
     except Exception as exc:  # pragma: no cover - runtime safety
         log.exception("Bridge error: %s", exc)
         reply = "Error contacting the API."
+
     await msg.channel.send(reply)
 
 
