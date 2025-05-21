@@ -38,3 +38,13 @@ python3 -m pytest
 ```
 
 All tests live in the `tests/` directory.
+
+### Updating the API spec
+
+If you change any API routes, regenerate `openapi.json` and commit the result:
+
+```bash
+make openapi && git add openapi.json
+```
+
+The CI workflow checks that this file is up to date.

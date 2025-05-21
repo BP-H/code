@@ -2,6 +2,7 @@ version: "3.9"
 services:
   api:
     build: .
+    env_file: .env
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       # Select the OpenAI model used by the API (default: "gpt-4o")
@@ -16,3 +17,5 @@ services:
     ports: ["8000:8000"]
   redis:
     image: redis:7-alpine
+    ports:
+      - "6379:6379"

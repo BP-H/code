@@ -131,8 +131,8 @@ curl -X POST http://localhost:8000/merge \
 
 ### Environment Variables
 
-The API reads a few settings from the environment. When using
-`docker-compose.yml` you can override these values:
+The API reads a few settings from the environment. Copy `.env.example` to `.env`
+and edit the values, or override them in `docker-compose.yml`:
 
 - `OPENAI_API_KEY` – your OpenAI authentication key.
 - `OPENAI_MODEL` – OpenAI model name (default: `gpt-4o`).
@@ -191,6 +191,9 @@ python3 create_your_own_gpt.py
 > **Note**: The mini-game lives in its own folder and is not integrated with the
 > main GPT Frenzy app yet. It's an optional side project that may change or break
 > without notice.
+
+The `mini-game/` folder is **experimental**. See
+[PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) for how the repository is laid out.
 
 ## Mini-game
 

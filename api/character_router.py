@@ -37,7 +37,12 @@ def get_redis():
     if _redis_client is None:
         redis_url = os.getenv("REDIS_URL")
         if redis_url:
-            _redis_client = redis.from_url(redis_url, decode_responses=True)
+            try:
+                client = redis.from_url(redis_url, decode_responses=True)
+                client.ping()
+                _redis_client = client
+            except redis.RedisError:
+                _redis_client = fakeredis.FakeRedis()
         else:
             _redis_client = fakeredis.FakeRedis()
     return _redis_client
@@ -119,12 +124,10 @@ class Msg(BaseModel):
     message: str
 
 
-import os, redis, functools
-
-r = redis.from_url(
-    os.getenv("REDIS_URL", "redis://localhost:6379"), decode_responses=True
-)
 from collections import Counter
+import redis
+import os
+import functools
 
 _fallback_counter = Counter()
 
@@ -146,16 +149,19 @@ def handle_errors(func):
 
 def rate_limit(ip, limit=60):
     key = f"rl:{ip}:{int(time.time())//60}"
+    r = get_redis()
     try:
         count = r.incr(key)
-    except redis.RedisError:
-        _fallback_counter[key] += 1
-        count = _fallback_counter[key]
-    else:
         try:
             r.expire(key, 61)
         except redis.RedisError:
             pass
+    except redis.RedisError:
+        # Switch to in-memory fallback when Redis is unreachable
+        global _redis_client
+        _redis_client = fakeredis.FakeRedis()
+        r = _redis_client
+        count = r.incr(key)
     if count > limit:
         raise HTTPException(429, "Rate limit exceeded")
 
