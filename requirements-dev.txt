@@ -1,9 +1,5 @@
+-r requirements.txt
 black
-pytest
-fakeredis
 flake8
 isort
-pytest
-fakeredis
-pyyaml
-rich~=13.7
+pytest~=8.1
