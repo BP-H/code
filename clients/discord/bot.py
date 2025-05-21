@@ -1,4 +1,9 @@
-"""Minimal Discord bot using either a local persona or the API."""
+"""Minimal Discord bot using either a local persona or the API.
+
+Pass the persona path as the first command-line argument or set
+``FRENZY_PERSONA_DIR`` in the environment. If no persona is provided, the bot
+falls back to calling the API specified by ``FRENZY_API_URL``.
+"""
 
 import asyncio
 import logging
@@ -18,7 +23,7 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 CHARACTER = os.getenv("FRENZY_CHARACTER", "blueprint-nova")
 
 args = sys.argv[1:]
-PERSONA_DIR = args[0] if args else None
+PERSONA_DIR = args[0] if args else os.getenv("FRENZY_PERSONA_DIR")
 if len(args) >= 2:
     TOKEN = args[1]
 
@@ -77,7 +82,9 @@ async def on_message(msg: discord.Message) -> None:
     except Exception as exc:  # pragma: no cover - runtime safety
         log.exception("Bot error: %s", exc)
         reply = (
-            "Error contacting the API." if persona is None else "Error generating reply."
+            "Error contacting the API."
+            if persona is None
+            else "Error generating reply."
         )
     await msg.channel.send(reply)
 
@@ -87,4 +94,3 @@ if __name__ == "__main__":
         print("DISCORD_TOKEN environment variable not set")
         raise SystemExit(1)
     client.run(TOKEN)
-

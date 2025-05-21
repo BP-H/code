@@ -10,12 +10,19 @@ and respond to messages in Discord.
 2. Enable the **Message Content Intent** for your bot in the Discord
    developer portal so it can read messages. The bot sets
    `intents.message_content = True` in `bot.py`.
-3. Run the bot, passing the persona directory and your Discord token:
+3. Run the bot with a persona directory and your Discord token. You can pass
+   the path as the first argument or set `FRENZY_PERSONA_DIR` in the
+   environment:
    ```bash
+   # command-line argument
    python bot.py /path/to/persona YOUR_BOT_TOKEN
+
+   # or environment variable
+   export FRENZY_PERSONA_DIR=/path/to/persona
+   python bot.py YOUR_BOT_TOKEN
    ```
-   The persona's `generate()` coroutine will be awaited for every message
-   the bot can see and the result sent back to the same channel.
+   The persona's `generate()` coroutine will be awaited for every message the
+   bot can see and the result sent back to the same channel.
 
 `bot.py` keeps things minimal so you can adapt it to your needs.
 
