@@ -139,7 +139,7 @@ and edit the values, or override them in `docker-compose.yml`:
 - `OPENAI_MODEL` – OpenAI model name (default: `gpt-4`).
 - `DISCORD_TOKEN` – bot token used by `clients/discord/bot.py` and
   `clients/discord/bridge.py`.
-- `FRENZY_API_URL` – API endpoint used by the Discord bot (default: `http://localhost:8000`).
+- `FRENZY_API_URL` – API endpoint used by the Discord bot (default: `http://localhost:8000`; use `http://api:8000` with Docker Compose).
 - `FRENZY_CHARACTER` – persona identifier for the Discord bridge (default: `blueprint-nova`).
 - `FRENZY_PERSONA_DIR` – local persona directory for `clients/discord/bot.py`.
 - `REDIS_URL` – full Redis URL (overrides host/port).
@@ -149,6 +149,9 @@ and edit the values, or override them in `docker-compose.yml`:
   The API also automatically falls back to in-memory Redis if the configured
   server can't be reached.
 - `ALLOWED_ORIGINS` – comma-separated list for CORS (default: `*`).
+
+Once these variables are configured, run `docker-compose up` to launch the API,
+Redis, and the Discord bot in one step.
 
 ### Updating `openapi.json`
 
