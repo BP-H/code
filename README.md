@@ -185,8 +185,12 @@ python3 create_your_own_gpt.py
 ```
 ## Play a Game
 
-[▶️ Try “Guess That Persona!”](mini-game/index.html) – no installs needed, runs in your browser!
+[▶️ Try “Guess That Persona!”](mini-game/index.html) – no installs needed, runs in your browser! *(experimental)*
 <img src="docs/game_screenshot.png" alt="Game preview" width="400">
+
+> **Note**: The mini-game lives in its own folder and is not integrated with the
+> main GPT Frenzy app yet. It's an optional side project that may change or break
+> without notice.
 
 ## Mini-game
 
