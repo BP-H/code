@@ -26,12 +26,15 @@ SEARCH_DIRS: List[str] = [BASE_DIR, os.path.join(BASE_DIR, "personas")]
 def load_personas(dirs: List[str]) -> Dict[str, Tuple[str, str, str]]:
     """Return personas discovered under ``dirs``.
 
-    Each sub-folder name becomes the persona name. It must contain
-    ``instruction.txt`` and ``knowledge.txt`` files. IDs are assigned in
-    alphabetical order of folder names so they remain stable across runs.
+    The loader first looks for persona subdirectories containing
+    ``instruction.txt`` and ``knowledge.txt`` files. If none are found, it
+    falls back to pairing ``*GPT_INSTRUCTIONS.txt`` and ``*DEEP_KNOWLEDGE*.txt``
+    files located directly inside the ``personas`` folder. IDs are assigned in
+    alphabetical order of persona names so they remain stable across runs.
     """
 
-    discovered = {}
+    discovered: Dict[str, Tuple[str, str, str]] = {}
+
     for d in dirs:
         if not os.path.isdir(d):
             continue
@@ -43,6 +46,34 @@ def load_personas(dirs: List[str]) -> Dict[str, Tuple[str, str, str]]:
             know = os.path.join(persona_dir, "knowledge.txt")
             if os.path.isfile(instr) and os.path.isfile(know):
                 discovered[name] = (name, instr, know)
+
+    if not discovered:
+        import re
+
+        for d in dirs:
+            if not os.path.isdir(d):
+                continue
+
+            instructions: Dict[str, str] = {}
+            knowledge: Dict[str, str] = {}
+
+            for fname in os.listdir(d):
+                if fname.endswith("GPT_INSTRUCTIONS.txt"):
+                    m = re.search(r"([^_]+)_GPT_INSTRUCTIONS\.txt$", fname)
+                    if m:
+                        instructions[m.group(1)] = os.path.join(d, fname)
+
+                if "DEEP_KNOWLEDGE" in fname and fname.endswith(".txt"):
+                    m = re.search(r"_DEEP_KNOWLEDGE_([^.]*)\.txt$", fname)
+                    if m:
+                        knowledge[m.group(1)] = os.path.join(d, fname)
+
+            for name in set(instructions) & set(knowledge):
+                discovered[name] = (
+                    name,
+                    instructions[name],
+                    knowledge[name],
+                )
 
     sorted_names = sorted(discovered)
     return {str(i + 1): discovered[n] for i, n in enumerate(sorted_names)}
