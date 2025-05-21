@@ -81,6 +81,10 @@ async def on_message(msg: discord.Message) -> None:
     except Exception as exc:  # pragma: no cover - runtime safety
         log.exception("Bridge error: %s", exc)
         reply = "Error contacting the API."
+        if isinstance(exc, aiohttp.ClientConnectionError) or (
+            isinstance(exc, aiohttp.ClientResponseError) and exc.status == 503
+        ):
+            reply += " (Is the API server running and accessible?)"
 
     await msg.channel.send(reply)
 
