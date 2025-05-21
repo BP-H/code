@@ -25,7 +25,7 @@ jobs:
       - name: Run tests
         run: pytest -q
       - name: Verify OpenAPI spec
-        run: make check-openapi
+        run: make openapi-check
       - name: Check requirements drift
         run: |
           pip-compile --dry-run requirements.in
