@@ -6,7 +6,7 @@ import aiohttp
 import discord
 
 API_URL = os.getenv("FRENZY_API_URL", "http://localhost:8000").rstrip("/")
-TOKEN = os.getenv("DISCORD_BOT_TOKEN")
+TOKEN = os.getenv("DISCORD_TOKEN")
 CHARACTER = os.getenv("FRENZY_CHARACTER", "blueprint-nova")
 
 logging.basicConfig(level=logging.INFO)
@@ -74,6 +74,6 @@ async def on_message(msg: discord.Message) -> None:
 
 if __name__ == "__main__":
     if not TOKEN:
-        print("DISCORD_BOT_TOKEN environment variable not set")
+        print("DISCORD_TOKEN environment variable not set")
         raise SystemExit(1)
     client.run(TOKEN)

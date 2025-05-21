@@ -24,7 +24,7 @@ and respond to messages in Discord.
 Forward messages to the REST API instead of a local persona:
 
 ```bash
-export DISCORD_BOT_TOKEN=YOUR_TOKEN
+export DISCORD_TOKEN=YOUR_TOKEN
 export FRENZY_API_URL=http://localhost:8000
 python bridge.py
 ```
