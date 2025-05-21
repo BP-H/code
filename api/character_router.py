@@ -21,7 +21,9 @@ if not _api_key:
     )
     client = None
 else:
-    client = openai.OpenAI(api_key=_api_key)
+    # Configure the global OpenAI client so standard API calls work
+    openai.api_key = _api_key
+    client = openai
 # Allow callers to set the OpenAI model via env with a sensible default so we
 # can easily swap models when deploying.
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4")
@@ -210,7 +212,7 @@ def chat(req: Msg, request: Request):
         raise HTTPException(status_code=404, detail="Persona not found")
     try:
         reply = (
-            client.chat.completions.create(
+            client.ChatCompletion.create(
                 model=OPENAI_MODEL,
                 messages=[
                     {"role": "system", "content": PROMPTS[req.character]},
@@ -237,7 +239,7 @@ def chat_stream(req: Msg, request: Request):
 
     def gen():
         try:
-            resp = client.chat.completions.create(
+            resp = client.ChatCompletion.create(
                 model=OPENAI_MODEL,
                 messages=[
                     {"role": "system", "content": PROMPTS[req.character]},
