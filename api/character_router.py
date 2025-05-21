@@ -14,10 +14,13 @@ import functools
 
 log = logging.getLogger(__name__)
 
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+_api_key = os.getenv("OPENAI_API_KEY")
+if not _api_key:
+    raise RuntimeError("OPENAI_API_KEY environment variable not set")
+client = openai.OpenAI(api_key=_api_key)
 # Allow callers to set the OpenAI model via env with a sensible default so we
 # can easily swap models when deploying.
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
 BASE = pathlib.Path(__file__).parent.parent
 PERSONA_DIR = BASE / "personas"
 MANIFEST = BASE / "manifest.yaml"
