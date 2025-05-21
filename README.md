@@ -191,7 +191,8 @@ python3 create_your_own_gpt.py
 
 > **Note**: The mini-game lives in its own folder and is not integrated with the
 > main GPT Frenzy app yet. It's an optional side project that may change or break
-> without notice.
+> without notice. When running the API locally, you can access it at
+> `http://localhost:8000/mini-game`.
 
 The `mini-game/` folder is **experimental**. See
 [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) for how the repository is laid out.

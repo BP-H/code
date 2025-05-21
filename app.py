@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 from fastapi import Body, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import persona_selector as ps
 from gptfrenzy.core.utils import ensure_parent_dirs
 
@@ -13,6 +14,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Serve the experimental mini-game as static files if present.
+mini_game_dir = Path(__file__).resolve().parent / "mini-game"
+if mini_game_dir.is_dir():
+    app.mount("/mini-game", StaticFiles(directory=str(mini_game_dir), html=True), name="mini-game")
 
 
 @app.get("/personas")
