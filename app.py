@@ -51,6 +51,22 @@ if mini_game_dir.is_dir():
 get_redis()
 
 
+@app.on_event("startup")
+def _init_openai() -> None:
+    """Configure the OpenAI client if an API key is provided."""
+    key = os.getenv("OPENAI_API_KEY")
+    if not key:
+        logging.warning(
+            "OPENAI_API_KEY not set. Running without OpenAI integration."
+        )
+        app.state.openai_client = None
+    else:  # pragma: no cover - only runs when key provided
+        import openai
+
+        openai.api_key = key
+        app.state.openai_client = openai
+
+
 @app.get("/personas")
 def get_personas():
     """Return available persona IDs."""
