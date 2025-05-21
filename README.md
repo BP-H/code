@@ -140,6 +140,7 @@ and edit the values, or override them in `docker-compose.yml`:
 - `DISCORD_TOKEN` – bot token used by `clients/discord/bot.py` and
   `clients/discord/bridge.py`.
 - `FRENZY_API_URL` – API endpoint used by the Discord bot (default: `http://localhost:8000`).
+- `FRENZY_PERSONA_DIR` – local persona directory for `clients/discord/bot.py`.
 - `REDIS_URL` – full Redis URL (overrides host/port).
 - `REDIS_HOST` – hostname of the Redis instance (default: `redis`).
 - `REDIS_PORT` – port for Redis (default: `6379`).
