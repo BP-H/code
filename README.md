@@ -139,6 +139,7 @@ and edit the values, or override them in `docker-compose.yml`:
 - `REDIS_URL` – full Redis URL (overrides host/port).
 - `REDIS_HOST` – hostname of the Redis instance (default: `redis`).
 - `REDIS_PORT` – port for Redis (default: `6379`).
+- `USE_FAKE_REDIS` – set to any value to force an in-memory Redis instance.
 - `ALLOWED_ORIGINS` – comma-separated list for CORS (default: `*`).
 
 ### Updating `openapi.json`
