@@ -19,11 +19,14 @@ jobs:
         run: pip install -r requirements-dev.txt --break-system-packages
       - name: Run tests
         run: pytest -q
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-      - name: Update OpenAPI spec
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          make openapi
-          git push
+
+  openapi-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt --break-system-packages
+      - run: make openapi
+      - run: git diff --exit-code openapi.json
