@@ -1,12 +1,14 @@
-"""Discord bot that streams replies from the API."""
+"""Minimal Discord bot using either a local persona or the API."""
 
 import asyncio
 import logging
 import os
+import sys
 
 import aiohttp
 import discord
 from dotenv import load_dotenv
+from gptfrenzy.core.spawn import launch
 
 
 load_dotenv()
@@ -15,6 +17,11 @@ API_URL = os.getenv("FRENZY_API_URL", "http://localhost:8000").rstrip("/")
 TOKEN = os.getenv("DISCORD_TOKEN")
 CHARACTER = os.getenv("FRENZY_CHARACTER", "blueprint-nova")
 
+args = sys.argv[1:]
+PERSONA_DIR = args[0] if args else None
+if len(args) >= 2:
+    TOKEN = args[1]
+
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
@@ -22,7 +29,14 @@ intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
 
+persona = launch("discord", PERSONA_DIR) if PERSONA_DIR else None
+
 _last = 0.0
+
+
+@client.event
+async def on_ready() -> None:
+    log.info("Logged in as %s using persona %s", client.user, PERSONA_DIR or CHARACTER)
 
 
 async def send_stream(text: str) -> str:
@@ -56,10 +70,15 @@ async def on_message(msg: discord.Message) -> None:
     if msg.author.bot:
         return
     try:
-        reply = await send_stream(msg.content)
+        if persona is not None:
+            reply = await persona.generate(msg.content)
+        else:
+            reply = await send_stream(msg.content)
     except Exception as exc:  # pragma: no cover - runtime safety
-        log.exception("Bridge error: %s", exc)
-        reply = "Error contacting the API."
+        log.exception("Bot error: %s", exc)
+        reply = (
+            "Error contacting the API." if persona is None else "Error generating reply."
+        )
     await msg.channel.send(reply)
 
 
