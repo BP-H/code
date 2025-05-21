@@ -137,8 +137,8 @@ and edit the values, or override them in `docker-compose.yml`:
 - `OPENAI_API_KEY` – your OpenAI authentication key. If omitted, the chat
   endpoints respond with `503` until a key is supplied and a warning is logged at startup.
 - `OPENAI_MODEL` – OpenAI model name (default: `gpt-4`).
-- `DISCORD_TOKEN` – bot token for `clients/discord/bot.py`.
-- `DISCORD_BOT_TOKEN` – token for `clients/discord/bridge.py`.
+- `DISCORD_TOKEN` – bot token used by `clients/discord/bot.py` and
+  `clients/discord/bridge.py`.
 - `FRENZY_API_URL` – API endpoint used by the Discord bot (default: `http://localhost:8000`).
 - `REDIS_URL` – full Redis URL (overrides host/port).
 - `REDIS_HOST` – hostname of the Redis instance (default: `redis`).
