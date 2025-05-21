@@ -16,3 +16,6 @@ services:
     ports: ["8000:8000"]
   redis:
     image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"

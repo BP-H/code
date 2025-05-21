@@ -26,13 +26,20 @@ _redis_client = None
 
 
 def get_redis():
-    """Return a Redis client or a fakeredis stub when no REDIS_URL."""
+    """Return a connected Redis client with a fakeredis fallback."""
     global _redis_client
     if _redis_client is None:
         redis_url = os.getenv("REDIS_URL")
-        if redis_url:
-            _redis_client = redis.from_url(redis_url, decode_responses=True)
-        else:
+        if not redis_url:
+            host = os.getenv("REDIS_HOST", "redis")
+            port = os.getenv("REDIS_PORT", "6379")
+            redis_url = f"redis://{host}:{port}"
+        try:
+            client = redis.from_url(redis_url, decode_responses=True)
+            client.ping()
+            _redis_client = client
+        except redis.RedisError as exc:
+            log.warning("Redis unavailable (%s), using fakeredis", exc)
             _redis_client = fakeredis.FakeRedis()
     return _redis_client
 
@@ -116,7 +123,8 @@ class Msg(BaseModel):
 
 
 import os, redis, functools
-r = redis.from_url(os.getenv("REDIS_URL", "redis://localhost:6379"), decode_responses=True)
+# Lazily connect to Redis so startup doesn't fail when it's unavailable
+r = get_redis()
 from collections import Counter
 _fallback_counter = Counter()
 
@@ -137,14 +145,15 @@ def handle_errors(func):
 
 def rate_limit(ip, limit=60):
     key = f"rl:{ip}:{int(time.time())//60}"
+    client = get_redis()
     try:
-        count = r.incr(key)
+        count = client.incr(key)
     except redis.RedisError:
         _fallback_counter[key] += 1
         count = _fallback_counter[key]
     else:
         try:
-            r.expire(key, 61)
+            client.expire(key, 61)
         except redis.RedisError:
             pass
     if count > limit:

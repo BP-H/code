@@ -141,6 +141,10 @@ The API reads a few settings from the environment. When using
 - `REDIS_PORT` – port for Redis (default: `6379`).
 - `ALLOWED_ORIGINS` – comma-separated list for CORS (default: `*`).
 
+If the API cannot connect to Redis, it automatically falls back to an
+in-memory `fakeredis` instance and logs a warning so the server keeps
+running.
+
 ### Updating `openapi.json`
 
 Run `python3 app.py --openapi` to regenerate `openapi.json`. This command loads `api.character_router:app` so the resulting spec documents `/chat`, `/chat/stream`, and `/manifest`. Rebuild the file whenever you change those endpoints.
