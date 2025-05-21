@@ -3,3 +3,6 @@ __pycache__/
 *.log
 .DS_Store
 CREATE_YOUR_OWN_GPT/
+
+# Local environment variables
+.env
