@@ -34,17 +34,33 @@ OPENAI_ERROR_MSG = "\u26a0\ufe0f Sorry, something went wrong with the language m
 def get_redis():
     """Return a Redis client, falling back to :class:`fakeredis.StrictRedis`."""
     global _redis_client
-    if _redis_client is None:
-        redis_url = os.getenv("REDIS_URL")
-        if redis_url:
-            try:
-                client = redis.from_url(redis_url, decode_responses=True)
-                client.ping()
-                _redis_client = client
-            except redis.RedisError:
-                _redis_client = fakeredis.StrictRedis()
-        else:
-            _redis_client = fakeredis.StrictRedis()
+    if _redis_client is not None:
+        return _redis_client
+
+    # Allow developers to force fakeredis via env for easier local testing
+    if os.getenv("USE_FAKE_REDIS"):
+        _redis_client = fakeredis.StrictRedis()
+        return _redis_client
+
+    redis_url = os.getenv("REDIS_URL")
+    if redis_url:
+        try:
+            client = redis.from_url(redis_url, decode_responses=True)
+            client.ping()
+            _redis_client = client
+            return _redis_client
+        except redis.RedisError:
+            pass
+
+    # Fall back to host/port if provided
+    host = os.getenv("REDIS_HOST", "localhost")
+    port = int(os.getenv("REDIS_PORT", "6379"))
+    try:
+        client = redis.Redis(host=host, port=port, decode_responses=True)
+        client.ping()
+        _redis_client = client
+    except redis.RedisError:
+        _redis_client = fakeredis.StrictRedis()
     return _redis_client
 
 
