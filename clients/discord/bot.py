@@ -1,49 +1,71 @@
-"""Minimal Discord bot using the spawn system."""
+"""Discord bot that streams replies from the API."""
 
 import asyncio
 import logging
-import sys
+import os
 
-try:
-    import discord
-except ImportError:  # pragma: no cover - optional dependency
-    print("Install discord.py (`pip install discord.py`) to use this bot")
-    raise SystemExit(1)
+import aiohttp
+import discord
+from dotenv import load_dotenv
 
-from gptfrenzy.core.spawn import launch
 
+load_dotenv()
+
+API_URL = os.getenv("FRENZY_API_URL", "http://localhost:8000").rstrip("/")
+TOKEN = os.getenv("DISCORD_TOKEN")
+CHARACTER = os.getenv("FRENZY_CHARACTER", "blueprint-nova")
+
+logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
+intents = discord.Intents.default()
+intents.message_content = True
+client = discord.Client(intents=intents)
 
-async def main(persona_dir: str, token: str) -> None:
-    persona = launch("discord", persona_dir)
-    intents = discord.Intents.default()
-    intents.message_content = True
-    client = discord.Client(intents=intents)
+_last = 0.0
 
-    @client.event
-    async def on_message(message: discord.Message) -> None:
-        if message.author.bot:
-            return
-        try:
-            reply = await persona.generate(message.content)
-            await message.channel.send(reply)
-        except Exception as exc:  # pragma: no cover - runtime safety
-            log.exception("Failed to handle message: %s", exc)
-            try:
-                await message.channel.send("⚠️ Sorry, something went wrong")
-            except Exception as send_exc:  # pragma: no cover - logging only
-                log.exception("Failed to send error message: %s", send_exc)
 
+async def send_stream(text: str) -> str:
+    """Return a full reply by streaming tokens from the API."""
+    global _last
+    wait = 1 - (asyncio.get_event_loop().time() - _last)
+    if wait > 0:
+        await asyncio.sleep(wait)
+    _last = asyncio.get_event_loop().time()
+    async with aiohttp.ClientSession() as s:
+        async with s.post(
+            f"{API_URL}/chat/stream",
+            json={"character": CHARACTER, "message": text},
+        ) as r:
+            r.raise_for_status()
+            buf = ""
+            reply_parts: list[str] = []
+            async for chunk in r.content.iter_chunked(1024):
+                buf += chunk.decode("utf-8")
+                while "\n\n" in buf:
+                    line, buf = buf.split("\n\n", 1)
+                    if line.startswith("data: "):
+                        reply_parts.append(line[6:])
+            if buf.startswith("data: "):
+                reply_parts.append(buf[6:])
+            return "".join(reply_parts)
+
+
+@client.event
+async def on_message(msg: discord.Message) -> None:
+    if msg.author.bot:
+        return
     try:
-        await client.start(token)
-    except discord.LoginFailure:
-        log.error("Invalid Discord token")
-        raise SystemExit(1)
+        reply = await send_stream(msg.content)
+    except Exception as exc:  # pragma: no cover - runtime safety
+        log.exception("Bridge error: %s", exc)
+        reply = "Error contacting the API."
+    await msg.channel.send(reply)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python bot.py <persona_dir> <discord_token>")
+    if not TOKEN:
+        print("DISCORD_TOKEN environment variable not set")
         raise SystemExit(1)
-    asyncio.run(main(sys.argv[1], sys.argv[2]))
+    client.run(TOKEN)
+
