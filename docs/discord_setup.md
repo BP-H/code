@@ -5,7 +5,8 @@ API's `/chat/stream` endpoint when invoked. The bot reads environment variables
 from a local `.env` file using **python-dotenv**.
 
 1. Copy `.env.example` to `.env` and set `DISCORD_TOKEN` to your bot token.
-   Adjust `FRENZY_API_URL` if your server runs on a different host.
+   Adjust `FRENZY_API_URL` or `FRENZY_CHARACTER` if you use a different API host
+   or persona.
 2. Run the bot:
    ```bash
    make discord-run

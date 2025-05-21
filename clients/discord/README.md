@@ -33,8 +33,11 @@ Forward messages to the REST API instead of a local persona:
 ```bash
 export DISCORD_TOKEN=YOUR_TOKEN
 export FRENZY_API_URL=http://localhost:8000
+export FRENZY_CHARACTER=blueprint-nova
 python bridge.py
 ```
+`FRENZY_CHARACTER` controls which persona the bridge uses when forwarding
+messages to the API.
 
 `bridge.py` reacts when a user mentions the bot, starts a message with `!gpt`,
 or sends the bot a direct message. It forwards the remaining text to the API's
