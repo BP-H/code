@@ -22,8 +22,10 @@ jobs:
         run: pip install pip-tools
       - name: Install dependencies
         run: pip install --no-cache-dir --require-hashes -r requirements-lock.txt --break-system-packages
+      - name: Install dev dependencies
+        run: pip install --no-cache-dir -r requirements-dev.txt --break-system-packages
       - name: Run tests
-        run: pytest -q
+        run: python -m pytest -q
       - name: Verify OpenAPI spec
         run: make check-openapi
       - name: Check requirements drift
