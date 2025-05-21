@@ -6,6 +6,33 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import persona_selector as ps
 from gptfrenzy.core.utils import ensure_parent_dirs
+import os
+import logging
+import redis
+import fakeredis
+
+_redis_client = None
+
+
+def get_redis():
+    """Return a Redis client, falling back to ``fakeredis.FakeRedis``."""
+    global _redis_client
+    if _redis_client is not None:
+        return _redis_client
+
+    host = os.getenv("REDIS_HOST", "localhost")
+    port = int(os.getenv("REDIS_PORT", "6379"))
+    try:
+        client = redis.Redis(host=host, port=port, decode_responses=True)
+        client.ping()
+        logging.info("Connected to Redis at %s:%s", host, port)
+        _redis_client = client
+    except redis.RedisError as exc:
+        logging.warning(
+            "Redis %s:%s unreachable: %s. Using fakeredis.", host, port, exc
+        )
+        _redis_client = fakeredis.FakeRedis()
+    return _redis_client
 
 app = FastAPI(title="Persona Selector API")
 app.add_middleware(
@@ -19,6 +46,9 @@ app.add_middleware(
 mini_game_dir = Path(__file__).resolve().parent / "mini-game"
 if mini_game_dir.is_dir():
     app.mount("/mini-game", StaticFiles(directory=str(mini_game_dir), html=True), name="mini-game")
+
+# Prime Redis connection at startup so failures are logged early
+get_redis()
 
 
 @app.get("/personas")
