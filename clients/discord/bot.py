@@ -93,4 +93,6 @@ if __name__ == "__main__":
     if not TOKEN:
         print("DISCORD_TOKEN environment variable not set")
         raise SystemExit(1)
+    if not PERSONA_DIR:
+        print(f"No local persona provided; using API mode with persona {CHARACTER}")
     client.run(TOKEN)
