@@ -8,7 +8,5 @@ pytest~=8.1
 pyyaml~=6.0
 redis~=5.0
 uvicorn[standard]~=0.30
-pytest
-fakeredis
-pyyaml
 rich~=13.7
+fakeredis~=2.23

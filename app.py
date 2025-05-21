@@ -1,6 +1,9 @@
 import json
 import sys
+import os
+import logging
 from pathlib import Path
+import redis.asyncio as redis
 from fastapi import Body, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -8,6 +11,26 @@ import persona_selector as ps
 from gptfrenzy.core.utils import ensure_parent_dirs
 
 app = FastAPI(title="Persona Selector API")
+
+# Redis client initialized on startup
+redis_client = None
+
+
+@app.on_event("startup")
+async def init_redis() -> None:
+    """Initialize Redis connection with fakeredis fallback."""
+    global redis_client
+    redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+    try:
+        redis_client = redis.from_url(redis_url)
+        await redis_client.ping()
+    except Exception:
+        import importlib
+
+        fakeredis = importlib.import_module("fakeredis")
+        logging.getLogger(__name__).info("Redis unavailable – using fakeredis")
+        redis_client = fakeredis.FakeRedis()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

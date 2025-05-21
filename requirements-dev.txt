@@ -3,4 +3,4 @@ black
 flake8
 isort
 pytest~=8.1
-fakeredis==2.*
+fakeredis~=2.23  # test extra
