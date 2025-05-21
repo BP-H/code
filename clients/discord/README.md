@@ -29,7 +29,8 @@ export FRENZY_API_URL=http://localhost:8000
 python bridge.py
 ```
 
-`bridge.py` reacts only when a user mentions the bot or starts a message with
-`!gpt`. It forwards the remaining text to the API's `/chat/stream` endpoint and
-posts the streamed reply back to the same channel. Any connection errors are
-logged and reported in Discord instead of crashing the bot.
+`bridge.py` reacts when a user mentions the bot, starts a message with `!gpt`,
+or sends the bot a direct message. It forwards the remaining text to the API's
+`/chat/stream` endpoint and posts the streamed reply back to the same channel.
+Any connection errors are logged and reported in Discord instead of crashing
+the bot.
