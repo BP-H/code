@@ -10,7 +10,7 @@ except ImportError:  # pragma: no cover - optional dependency
     print("Install discord.py (`pip install discord.py`) to use this bot")
     raise SystemExit(1)
 
-from gptfrenzy.spawn import launch
+from gptfrenzy.core.spawn import launch
 
 log = logging.getLogger(__name__)
 

@@ -1,6 +1,6 @@
 # Discord Integration with Spawn System
 
-This example shows how to load a persona with `gptfrenzy.spawn.launch()`
+This example shows how to load a persona with `gptfrenzy.core.spawn.launch()`
 and respond to messages in Discord.
 
 1. Install `discord.py`:
