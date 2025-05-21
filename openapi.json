@@ -25,14 +25,13 @@
     "/merge": {
       "post": {
         "summary": "Merge",
-        "description": "Return merged instruction and knowledge text.",
+        "description": "Return merged instruction and knowledge text for persona ``id``.",
         "operationId": "merge_merge_post",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "title": "Id",
-                "type": "integer"
+                "$ref": "#/components/schemas/MergeRequest"
               }
             }
           },
@@ -196,6 +195,19 @@
             "items": {
               "$ref": "#/components/schemas/ValidationError"
             }
+          }
+        }
+      },
+      "MergeRequest": {
+        "title": "MergeRequest",
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
           }
         }
       },

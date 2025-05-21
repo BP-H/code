@@ -1,5 +1,10 @@
 .PHONY: openapi
 openapi:
-	python app.py --openapi
-	git add openapi.json
-	git diff --cached --quiet openapi.json || git commit -m "Update openapi.json" openapi.json
+	PYTHONPATH=. python scripts/generate_openapi.py openapi.json
+
+.PHONY: openapi-check
+openapi-check:
+	@temp_file=$$(mktemp); \
+	PYTHONPATH=. python scripts/generate_openapi.py $$temp_file; \
+	diff -u openapi.json $$temp_file; \
+	rm $$temp_file

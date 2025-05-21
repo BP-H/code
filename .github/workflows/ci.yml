@@ -21,9 +21,5 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run tests
         run: pytest -q
-      - name: Update OpenAPI spec
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          make openapi
-          git push
+      - name: Check OpenAPI spec
+        run: make openapi-check
