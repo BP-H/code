@@ -7,7 +7,7 @@ import pytest
 
 def test_missing_openai_key(monkeypatch):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
-    # stub openai.OpenAI so we can detect if it's called
+    # stub openai.ChatCompletion.create so we can detect if it's called
     called = False
 
     def fail(*a, **kw):
@@ -15,7 +15,9 @@ def test_missing_openai_key(monkeypatch):
         called = True
         raise AssertionError("OpenAI should not be called")
 
-    sys.modules.setdefault("openai", types.SimpleNamespace(OpenAI=fail))
+    sys.modules.setdefault(
+        "openai", types.SimpleNamespace(ChatCompletion=types.SimpleNamespace(create=fail))
+    )
 
     import api.character_router as cr
     importlib.reload(cr)

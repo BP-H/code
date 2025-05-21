@@ -152,7 +152,7 @@ def test_chat(monkeypatch):
     def fake_create(*args, **kwargs):
         return _types.SimpleNamespace(choices=[Choice()])
 
-    monkeypatch.setattr(cr.client.chat.completions, "create", fake_create)
+    monkeypatch.setattr(cr.client.ChatCompletion, "create", fake_create)
     with TestClient(cr.app) as client:
         resp = client.post(
             "/chat", json={"character": "blueprint-nova", "message": "hey"}
@@ -174,7 +174,7 @@ def test_chat_stream(monkeypatch):
 
         return [Chunk("A"), Chunk("B")]
 
-    monkeypatch.setattr(cr.client.chat.completions, "create", fake_create)
+    monkeypatch.setattr(cr.client.ChatCompletion, "create", fake_create)
     with TestClient(cr.app) as client:
         resp = client.post(
             "/chat/stream", json={"character": "blueprint-nova", "message": "hey"}
@@ -189,7 +189,7 @@ def test_chat_unknown_persona(monkeypatch):
     def boom(*args, **kwargs):
         raise AssertionError("should not be called")
 
-    monkeypatch.setattr(cr.client.chat.completions, "create", boom)
+    monkeypatch.setattr(cr.client.ChatCompletion, "create", boom)
     with TestClient(cr.app) as client:
         resp = client.post("/chat", json={"character": "bogus", "message": "hi"})
         assert resp.status_code == 404
@@ -201,7 +201,7 @@ def test_chat_stream_unknown_persona(monkeypatch):
     def boom(*args, **kwargs):
         raise AssertionError("should not be called")
 
-    monkeypatch.setattr(cr.client.chat.completions, "create", boom)
+    monkeypatch.setattr(cr.client.ChatCompletion, "create", boom)
     with TestClient(cr.app) as client:
         resp = client.post("/chat/stream", json={"character": "bogus", "message": "hi"})
         assert resp.status_code == 404
@@ -213,7 +213,7 @@ def test_chat_openai_error(monkeypatch):
     def fake_create(*args, **kwargs):
         raise RuntimeError("bad boom")
 
-    monkeypatch.setattr(cr.client.chat.completions, "create", fake_create)
+    monkeypatch.setattr(cr.client.ChatCompletion, "create", fake_create)
     with TestClient(cr.app) as client:
         resp = client.post(
             "/chat", json={"character": "blueprint-nova", "message": "hi"}
@@ -227,7 +227,7 @@ def test_chat_stream_openai_error(monkeypatch):
     def fake_create(*args, **kwargs):
         raise RuntimeError("kaboom")
 
-    monkeypatch.setattr(cr.client.chat.completions, "create", fake_create)
+    monkeypatch.setattr(cr.client.ChatCompletion, "create", fake_create)
     with TestClient(cr.app) as client:
         resp = client.post(
             "/chat/stream", json={"character": "blueprint-nova", "message": "hi"}
