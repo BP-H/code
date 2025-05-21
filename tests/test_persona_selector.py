@@ -11,6 +11,11 @@ def _make_persona(tmp_path, name):
     return d
 
 
+def _make_persona_files(tmp_path, name):
+    (tmp_path / f"{name}_GPT_INSTRUCTIONS.txt").write_text("i")
+    (tmp_path / f"{name}_DEEP_KNOWLEDGE_data.txt").write_text("k")
+
+
 def test_load_personas_sorted(tmp_path):
     _make_persona(tmp_path, "b")
     _make_persona(tmp_path, "a")
@@ -26,6 +31,15 @@ def test_load_personas_detects_new(tmp_path):
     _make_persona(tmp_path, "two")
     updated = ps.load_personas([str(tmp_path)])
     assert len(updated) == len(first) + 1
+
+
+def test_load_personas_fallback(tmp_path):
+    _make_persona_files(tmp_path, "alpha")
+    _make_persona_files(tmp_path, "beta")
+    personas = ps.load_personas([str(tmp_path)])
+    assert list(personas.keys()) == ["1", "2"]
+    assert personas["1"][0] == "alpha"
+    assert personas["2"][0] == "beta"
 
 
 def test_find_file_searches_dirs(tmp_path, monkeypatch):
