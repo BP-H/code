@@ -32,7 +32,7 @@ OPENAI_ERROR_MSG = "\u26a0\ufe0f Sorry, something went wrong with the language m
 
 
 def get_redis():
-    """Return a Redis client or a fakeredis stub when no REDIS_URL."""
+    """Return a Redis client, falling back to :class:`fakeredis.StrictRedis`."""
     global _redis_client
     if _redis_client is None:
         redis_url = os.getenv("REDIS_URL")
@@ -42,9 +42,9 @@ def get_redis():
                 client.ping()
                 _redis_client = client
             except redis.RedisError:
-                _redis_client = fakeredis.FakeRedis()
+                _redis_client = fakeredis.StrictRedis()
         else:
-            _redis_client = fakeredis.FakeRedis()
+            _redis_client = fakeredis.StrictRedis()
     return _redis_client
 
 
@@ -159,7 +159,7 @@ def rate_limit(ip, limit=60):
     except redis.RedisError:
         # Switch to in-memory fallback when Redis is unreachable
         global _redis_client
-        _redis_client = fakeredis.FakeRedis()
+        _redis_client = fakeredis.StrictRedis()
         r = _redis_client
         count = r.incr(key)
     if count > limit:
