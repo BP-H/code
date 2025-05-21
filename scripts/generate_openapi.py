@@ -23,11 +23,7 @@ sys.modules.setdefault("openai", types.SimpleNamespace(OpenAI=lambda *a, **kw: o
 sys.modules.setdefault("yaml", types.SimpleNamespace(safe_load=lambda *_: []))
 
 from gptfrenzy.core.utils import ensure_parent_dirs
-from api.character_router import app as character_app
 from app import app
-
-# Mount the character API so the spec includes those routes
-app.include_router(character_app.router)
 
 path = Path("openapi.json")
 ensure_parent_dirs(path)

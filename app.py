@@ -99,6 +99,10 @@ def merge(id: int = Body(...)):
     """Return merged instruction and knowledge text."""
     return {"text": _merge_text(str(id))}
 
+# Mount chat API routes so they are always available
+from api.character_router import app as character_app
+app.include_router(character_app.router)
+
 
 if __name__ == "__main__":
     if "--openapi" in sys.argv:
@@ -112,11 +116,6 @@ if __name__ == "__main__":
         )
         sys.modules.setdefault("yaml", types.SimpleNamespace(safe_load=lambda *_: []))
         sys.modules.setdefault("openai", types.SimpleNamespace(OpenAI=lambda *a, **kw: object()))
-
-        from api.character_router import app as character_app
-
-        # Mount the character API so our spec includes those routes
-        app.include_router(character_app.router)
 
         path = Path("openapi.json")
         ensure_parent_dirs(path)
