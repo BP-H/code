@@ -20,7 +20,7 @@ if not _api_key:
 client = openai.OpenAI(api_key=_api_key)
 # Allow callers to set the OpenAI model via env with a sensible default so we
 # can easily swap models when deploying.
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4")
 BASE = pathlib.Path(__file__).parent.parent
 PERSONA_DIR = BASE / "personas"
 MANIFEST = BASE / "manifest.yaml"
