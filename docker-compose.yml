@@ -5,8 +5,8 @@ services:
     env_file: .env
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-      # Select the OpenAI model used by the API (default: "gpt-4o")
-      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o}
+      # Select the OpenAI model used by the API (default: "gpt-4")
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4}
       # Optional Redis connection URL. Overrides host/port if set.
       - REDIS_URL=${REDIS_URL}
       # Hostname of the Redis instance used by the API (default: "redis")
