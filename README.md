@@ -134,12 +134,15 @@ curl -X POST http://localhost:8000/merge \
 The API reads a few settings from the environment. Copy `.env.example` to `.env`
 and edit the values, or override them in `docker-compose.yml`:
 
-- `OPENAI_API_KEY` – your OpenAI authentication key.
+- `OPENAI_API_KEY` – your OpenAI authentication key. If omitted, the chat
+  endpoints respond with `503` until a key is supplied and a warning is logged at startup.
 - `OPENAI_MODEL` – OpenAI model name (default: `gpt-4`).
 - `REDIS_URL` – full Redis URL (overrides host/port).
 - `REDIS_HOST` – hostname of the Redis instance (default: `redis`).
 - `REDIS_PORT` – port for Redis (default: `6379`).
 - `USE_FAKE_REDIS` – set to any value to force an in-memory Redis instance.
+  The API also automatically falls back to in-memory Redis if the configured
+  server can't be reached.
 - `ALLOWED_ORIGINS` – comma-separated list for CORS (default: `*`).
 
 ### Updating `openapi.json`
