@@ -15,9 +15,11 @@ import functools
 log = logging.getLogger(__name__)
 
 _api_key = os.getenv("OPENAI_API_KEY")
-if not _api_key:
-    raise RuntimeError("OPENAI_API_KEY environment variable not set")
-client = openai.OpenAI(api_key=_api_key)
+if _api_key:
+    client = openai.OpenAI(api_key=_api_key)
+else:
+    client = None
+    log.error("OPENAI_API_KEY environment variable not set")
 # Allow callers to set the OpenAI model via env with a sensible default so we
 # can easily swap models when deploying.
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
@@ -29,6 +31,8 @@ _redis_client = None
 
 # Friendly message when OpenAI API fails
 OPENAI_ERROR_MSG = "\u26a0\ufe0f Sorry, something went wrong with the language model."
+# Response message when the API key is missing
+MISSING_KEY_MSG = "Server not configured with OpenAI API key."
 
 
 def get_redis():
@@ -172,6 +176,8 @@ def chat(req: Msg, request: Request):
     rate_limit(request.client.host)
     if req.character not in PROMPTS:
         raise HTTPException(status_code=404, detail="Persona not found")
+    if client is None:
+        raise HTTPException(status_code=500, detail=MISSING_KEY_MSG)
     try:
         reply = (
             client.chat.completions.create(
@@ -196,6 +202,8 @@ def chat_stream(req: Msg, request: Request):
     rate_limit(request.client.host)
     if req.character not in PROMPTS:
         raise HTTPException(status_code=404, detail="Persona not found")
+    if client is None:
+        raise HTTPException(status_code=500, detail=MISSING_KEY_MSG)
 
     def gen():
         try:

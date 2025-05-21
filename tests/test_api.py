@@ -234,3 +234,16 @@ def test_chat_stream_openai_error(monkeypatch):
         )
         assert resp.status_code == 500
         assert resp.json()["detail"] == cr.OPENAI_ERROR_MSG
+
+
+def test_chat_missing_api_key(monkeypatch):
+    """If OPENAI_API_KEY is missing, /chat should return a friendly error."""
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.setattr(cr, "client", None, raising=False)
+
+    with TestClient(cr.app) as client:
+        resp = client.post(
+            "/chat", json={"character": "blueprint-nova", "message": "hey"}
+        )
+        assert resp.status_code == 500
+        assert resp.json()["detail"] == cr.MISSING_KEY_MSG

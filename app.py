@@ -5,6 +5,8 @@ from fastapi import Body, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import persona_selector as ps
 from gptfrenzy.core.utils import ensure_parent_dirs
+import os
+import logging
 
 app = FastAPI(title="Persona Selector API")
 app.add_middleware(
@@ -13,6 +15,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Warn if the OpenAI API key is missing so clients get a friendly error.
+log = logging.getLogger(__name__)
+if not os.getenv("OPENAI_API_KEY"):
+    log.error(
+        "OPENAI_API_KEY not set. /chat endpoints will return an error."
+    )
 
 
 @app.get("/personas")
