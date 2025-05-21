@@ -18,6 +18,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
+      - name: Install pip-tools
+        run: pip install pip-tools
       - name: Install dependencies
         run: pip install --no-cache-dir --require-hashes -r requirements-lock.txt --break-system-packages
       - name: Run tests
@@ -26,3 +28,7 @@ jobs:
         run: make openapi
       - name: Fail on OpenAPI diff
         run: git diff --exit-code openapi.json
+      - name: Check requirements drift
+        run: |
+          pip-compile --dry-run requirements.in
+          pip-compile --dry-run requirements-dev.in
