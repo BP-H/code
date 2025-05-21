@@ -15,8 +15,8 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'pip'
-      - name: Install dev dependencies
-        run: pip install -r requirements-dev.txt --break-system-packages
+      - name: Install dependencies
+        run: pip install --no-cache-dir --require-hashes -r requirements-lock.txt --break-system-packages
       - name: Run tests
         run: pytest -q
 
