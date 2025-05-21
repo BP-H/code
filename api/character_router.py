@@ -27,6 +27,9 @@ MANIFEST = BASE / "manifest.yaml"
 PROMPTS = {}
 _redis_client = None
 
+# Friendly message when OpenAI API fails
+OPENAI_ERROR_MSG = "\u26a0\ufe0f Sorry, something went wrong with the language model."
+
 
 def get_redis():
     """Return a Redis client or a fakeredis stub when no REDIS_URL."""
@@ -38,6 +41,7 @@ def get_redis():
         else:
             _redis_client = fakeredis.FakeRedis()
     return _redis_client
+
 
 app = FastAPI(title="GPT Frenzy API")
 
@@ -76,15 +80,11 @@ def _load_manifest():
             raise ValueError(f"Invalid manifest entry at {MANIFEST}:{idx}")
 
         missing = [
-            key
-            for key in ("id", "prompt_file", "entrypoint")
-            if not entry.get(key)
+            key for key in ("id", "prompt_file", "entrypoint") if not entry.get(key)
         ]
         if missing:
             missing_keys = ", ".join(missing)
-            raise ValueError(
-                f"Manifest entry {MANIFEST}:{idx} missing {missing_keys}"
-            )
+            raise ValueError(f"Manifest entry {MANIFEST}:{idx} missing {missing_keys}")
 
         manifest[entry["id"]] = entry
 
@@ -110,6 +110,7 @@ def _prime_prompts():
         except FileNotFoundError as exc:
             log.warning("Prompt file for '%s' missing: %s", pid, exc)
 
+
 _prime_prompts()
 
 
@@ -119,13 +120,18 @@ class Msg(BaseModel):
 
 
 import os, redis, functools
-r = redis.from_url(os.getenv("REDIS_URL", "redis://localhost:6379"), decode_responses=True)
+
+r = redis.from_url(
+    os.getenv("REDIS_URL", "redis://localhost:6379"), decode_responses=True
+)
 from collections import Counter
+
 _fallback_counter = Counter()
 
 
 def handle_errors(func):
     """Translate common exceptions into HTTP errors."""
+
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         try:
@@ -174,10 +180,7 @@ def chat(req: Msg, request: Request):
         )
     except Exception as exc:
         log.exception("OpenAI API request failed: %s", exc)
-        raise HTTPException(
-            status_code=502,
-            detail=f"⚠️ Sorry, something went wrong: {exc}"
-        ) from exc
+        raise HTTPException(status_code=500, detail=OPENAI_ERROR_MSG) from exc
     return {"reply": reply}
 
 
@@ -204,10 +207,7 @@ def chat_stream(req: Msg, request: Request):
                     yield f"data: {token}\n\n"
         except Exception as exc:
             log.exception("OpenAI API request failed: %s", exc)
-            raise HTTPException(
-                status_code=502,
-                detail=f"⚠️ Sorry, something went wrong: {exc}"
-            ) from exc
+            raise HTTPException(status_code=500, detail=OPENAI_ERROR_MSG) from exc
 
     return StreamingResponse(gen(), media_type="text/event-stream")
 
@@ -246,9 +246,17 @@ def merge(req: MergeRequest):
     instr = next(persona_dir.glob("*_GPT_INSTRUCTIONS.txt"), None)
     know = next(persona_dir.glob("*_DEEP_KNOWLEDGE_*.txt"), None)
     if not instr or not know:
-        raise HTTPException(status_code=422, detail="Instruction or knowledge file missing")
+        raise HTTPException(
+            status_code=422, detail="Instruction or knowledge file missing"
+        )
     try:
-        merged = instr.read_text(encoding="utf-8").rstrip() + "\n\n" + know.read_text(encoding="utf-8").lstrip()
+        merged = (
+            instr.read_text(encoding="utf-8").rstrip()
+            + "\n\n"
+            + know.read_text(encoding="utf-8").lstrip()
+        )
     except FileNotFoundError:
-        raise HTTPException(status_code=422, detail="Instruction or knowledge file missing")
+        raise HTTPException(
+            status_code=422, detail="Instruction or knowledge file missing"
+        )
     return {"merged": merged}
