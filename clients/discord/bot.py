@@ -11,6 +11,7 @@ import os
 import sys
 
 import aiohttp
+import openai
 import discord
 from dotenv import load_dotenv
 from gptfrenzy.core.spawn import launch
@@ -20,7 +21,11 @@ load_dotenv()
 
 API_URL = os.getenv("FRENZY_API_URL", "http://localhost:8000").rstrip("/")
 TOKEN = os.getenv("DISCORD_TOKEN")
-CHARACTER = os.getenv("FRENZY_CHARACTER", "blueprint-nova")
+PERSONA_ID = int(os.getenv("FRENZY_PERSONA_ID", "1"))
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+if OPENAI_API_KEY:
+    openai.api_key = OPENAI_API_KEY
 
 args = sys.argv[1:]
 PERSONA_DIR = args[0] if args else os.getenv("FRENZY_PERSONA_DIR")
@@ -41,33 +46,34 @@ _last = 0.0
 
 @client.event
 async def on_ready() -> None:
-    log.info("Logged in as %s using persona %s", client.user, PERSONA_DIR or CHARACTER)
+    log.info("Logged in as %s using persona %s", client.user, PERSONA_DIR or PERSONA_ID)
+
+
+async def _persona_prompt() -> str:
+    async with aiohttp.ClientSession() as s:
+        async with s.post(f"{API_URL}/merge", json=PERSONA_ID) as r:
+            r.raise_for_status()
+            data = await r.json()
+            return data.get("text") or data.get("merged", "")
 
 
 async def send_stream(text: str) -> str:
-    """Return a full reply by streaming tokens from the API."""
+    """Return a reply from OpenAI using the merged persona."""
     global _last
     wait = 1 - (asyncio.get_event_loop().time() - _last)
     if wait > 0:
         await asyncio.sleep(wait)
     _last = asyncio.get_event_loop().time()
-    async with aiohttp.ClientSession() as s:
-        async with s.post(
-            f"{API_URL}/chat/stream",
-            json={"character": CHARACTER, "message": text},
-        ) as r:
-            r.raise_for_status()
-            buf = ""
-            reply_parts: list[str] = []
-            async for chunk in r.content.iter_chunked(1024):
-                buf += chunk.decode("utf-8")
-                while "\n\n" in buf:
-                    line, buf = buf.split("\n\n", 1)
-                    if line.startswith("data: "):
-                        reply_parts.append(line[6:])
-            if buf.startswith("data: "):
-                reply_parts.append(buf[6:])
-            return "".join(reply_parts)
+
+    prompt = await _persona_prompt()
+    resp = await openai.ChatCompletion.acreate(
+        model=OPENAI_MODEL,
+        messages=[
+            {"role": "system", "content": prompt},
+            {"role": "user", "content": text},
+        ],
+    )
+    return resp.choices[0].message.content
 
 
 @client.event
@@ -94,5 +100,5 @@ if __name__ == "__main__":
         print("DISCORD_TOKEN environment variable not set")
         raise SystemExit(1)
     if not PERSONA_DIR:
-        print(f"No local persona provided; using API mode with persona {CHARACTER}")
+        print(f"No local persona provided; using API mode with persona {PERSONA_ID}")
     client.run(TOKEN)
