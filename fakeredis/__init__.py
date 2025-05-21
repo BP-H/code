@@ -11,3 +11,8 @@ class FakeRedis:
     def expire(self, key, ttl):
         # TTL ignored but kept for interface compatibility
         pass
+
+
+class StrictRedis(FakeRedis):
+    """Alias of FakeRedis used as a drop-in stand-in for fakeredis.StrictRedis."""
+    pass
