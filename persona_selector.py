@@ -59,17 +59,17 @@ def load_personas(dirs: List[str]) -> Dict[str, Tuple[str, str, str]]:
 
             for fname in os.listdir(d):
                 if fname.endswith("GPT_INSTRUCTIONS.txt"):
-                    # The instruction files may include prefixes like
-                    # "!!!ATTENTION_READ_ALL!!!_". Capture everything after the
-                    # final prefix (or simply after the last underscore) so
-                    # files such as ``!!!ATTENTION_READ_ALL!!!_supernova_GPT_INSTRUCTIONS.txt``
-                    # correctly map to the persona ``supernova``.
-                    m = re.search(
-                        r"(?:.*ATTENTION_READ_ALL!!!_)?([^_]+)_GPT_INSTRUCTIONS\.txt$",
-                        fname,
-                    )
-                    if m:
-                        instructions[m.group(1)] = os.path.join(d, fname)
+                    # Some files use heavy prefixes like
+                    # ``!!!ATTENTION_READ_ALL!!!_MIMI_GPT_INSTRUCTIONS.txt``.
+                    # Extract the persona name after the *last* underscore
+                    # before ``_GPT_INSTRUCTIONS`` so arbitrary prefixes work.
+                    base = fname.rsplit("_GPT_INSTRUCTIONS", 1)[0]
+                    if "_" in base:
+                        name = base.rsplit("_", 1)[-1]
+                    else:
+                        name = base
+                    if name:
+                        instructions[name] = os.path.join(d, fname)
 
                 if "DEEP_KNOWLEDGE" in fname and fname.endswith(".txt"):
                     m = re.search(r"_DEEP_KNOWLEDGE_([^.]*)\.txt$", fname)

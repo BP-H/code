@@ -155,7 +155,7 @@ Redis, and the Discord bot in one step.
 
 ### Updating `openapi.json`
 
-Run `make openapi` to regenerate `openapi.json`. This command loads `api.character_router:app` so the resulting spec documents `/chat`, `/chat/stream`, and `/manifest`. Use `make openapi-check` to ensure it stays in sync and committed.
+Run `make openapi` to regenerate `openapi.json`. This command loads `app:app` so the resulting spec documents `/personas` and `/merge`. Use `make openapi-check` to ensure it stays in sync and committed.
 
 
 ## Web Chat Widget
@@ -170,8 +170,8 @@ python3 -m http.server 8000
 
 Then visit <http://localhost:8000/chat_widget.html?baseUrl=http://localhost:8000>.
 The widget reads the `baseUrl` query parameter (or a `data-baseurl` attribute on
-the `<script>` tag) and sends requests to `${baseUrl}/manifest` and
-`${baseUrl}/chat`.
+the `<script>` tag) and uses `${baseUrl}/merge` to fetch the full prompt before
+calling OpenAI directly.
 
 ## Company Sandbox Avatar
 
@@ -291,9 +291,8 @@ For questions or collaborations, reach out via Instagram DM.
 
 ### Universal SDKs
 Need this in a game, robot, or chatbot?
-Grab the stubs in **`/sdk`** and call `/chat`, `/manifest` (JSON), or `/manifest.yaml` (YAML) from Python, JS, C#, or any language that can hit HTTP — no extra dependencies required.
-
-For details on how the `manifest.yaml` file powers the character system and how to add your own entries, see [docs/manifest_system.md](docs/manifest_system.md).
+Grab the stubs in **`/sdk`** and use them to talk to the simple `/merge` endpoint from Python, JS, C#, or any language that can hit HTTP.
+The returned text can then be forwarded to OpenAI in your client of choice.
 To deploy a persona directory in another host (Discord, Unreal, Unity), follow the steps in [docs/spawn_system.md](docs/spawn_system.md).
 For a Unity-specific C# example using `GptFrenzyClient`, see [docs/unity_integration.md](docs/unity_integration.md).
 For a quick Discord bot setup, see [docs/discord_setup.md](docs/discord_setup.md).

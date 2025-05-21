@@ -99,9 +99,6 @@ def merge(id: int = Body(...)):
     """Return merged instruction and knowledge text."""
     return {"text": _merge_text(str(id))}
 
-# Mount chat API routes so they are always available
-from api.character_router import app as character_app
-app.include_router(character_app.router)
 
 
 if __name__ == "__main__":
