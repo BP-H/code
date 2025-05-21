@@ -59,7 +59,10 @@ def load_personas(dirs: List[str]) -> Dict[str, Tuple[str, str, str]]:
 
             for fname in os.listdir(d):
                 if fname.endswith("GPT_INSTRUCTIONS.txt"):
-                    m = re.search(r"([^_]+)_GPT_INSTRUCTIONS\.txt$", fname)
+                    # Grab the portion after the last underscore so files like
+                    # "!!!ATTENTION_READ_ALL!!!_supernova_GPT_INSTRUCTIONS.txt"
+                    # map to the persona "supernova".
+                    m = re.search(r"(?:.+_)?([^_]+)_GPT_INSTRUCTIONS\.txt$", fname)
                     if m:
                         instructions[m.group(1)] = os.path.join(d, fname)
 
