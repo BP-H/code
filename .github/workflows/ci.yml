@@ -19,14 +19,7 @@ jobs:
         run: pip install -r requirements-dev.txt --break-system-packages
       - name: Run tests
         run: pytest -q
-
-  openapi-check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-      - run: pip install -r requirements.txt --break-system-packages
-      - run: make openapi
-      - run: git diff --exit-code openapi.json
+      - name: Generate OpenAPI spec
+        run: make openapi
+      - name: Fail on OpenAPI diff
+        run: git diff --exit-code openapi.json
