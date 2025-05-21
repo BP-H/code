@@ -9,7 +9,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-API_URL = os.getenv("FRENZY_API_URL", "http://localhost:8000").rstrip("/")
+DEFAULT_API = "http://localhost:8000/merge"
+API_URL = os.getenv("FRENZY_API_URL", DEFAULT_API).rstrip("/")
 TOKEN = os.getenv("DISCORD_TOKEN")
 PERSONA_ID = int(os.getenv("FRENZY_PERSONA_ID", "1"))
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4")
@@ -29,7 +30,7 @@ _last = 0.0
 
 async def _persona_prompt() -> str:
     async with aiohttp.ClientSession() as s:
-        async with s.post(f"{API_URL}/merge", json=PERSONA_ID) as r:
+        async with s.post(API_URL, json=PERSONA_ID) as r:
             r.raise_for_status()
             data = await r.json()
             return data.get("text") or data.get("merged", "")
